@@ -1,0 +1,1 @@
+// Guest logic token generation
