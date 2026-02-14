@@ -8,4 +8,4 @@ class APIFeatures {
   limitFields() { return this; }
   paginate() { return this; }
 }
-module.exports = APIFeatures;
+export default APIFeatures;
