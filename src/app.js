@@ -1,8 +1,8 @@
 import express from 'express'
 
 // import error handlers
-// import globalErrorHandler from './controllers/errorController.js'
-// import AppError from './utils/appError.js'
+import globalErrorHandler from './controllers/errorController.js'
+import AppError from './utils/appError.js'
 
 // Import Routes 
 // import userRoutes from './routes/userRoutes.js'
@@ -26,11 +26,13 @@ app.use(express.json());
 // app.use('/api/reviews', reviewRoutes);
 
 // 404 Handler
-// app.all('*', (req, res, next) => {
-//   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
-// });
+app.use(
+    (req, res, next) => {
+        next(new AppError(`Invalid path. are sure they told you it is ${req.originalUrl} ?`, 404));
+    }
+);
 
 // Error Handler
-// app.use(globalErrorHandler);
+app.use(globalErrorHandler);
 
 export default app;
