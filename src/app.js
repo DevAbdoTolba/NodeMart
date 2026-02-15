@@ -5,7 +5,7 @@ import express from 'express'
 // import AppError from './utils/appError.js'
 
 // Import Routes 
-// import userRoutes from './routes/userRoutes.js'
+import userRoutes from './routes/userRoutes.js'
 // import productRoutes from './routes/productRoutes.js'
 // import categoryRoutes from './routes/categoryRoutes.js'
 // import orderRoutes from './routes/orderRoutes.js'
@@ -18,7 +18,7 @@ const app = express();
 app.use(express.json());
 
 // Routes
-// app.use('/api/users', userRoutes);
+app.use(userRoutes);
 // app.use('/api/products', productRoutes);
 // app.use('/api/categories', categoryRoutes);
 // app.use('/api/orders', orderRoutes);
