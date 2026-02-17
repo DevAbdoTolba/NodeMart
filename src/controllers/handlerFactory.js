@@ -68,7 +68,8 @@ export const getAll = Model => catchAsync(async (req, res, next) => {
     // 1. Prepare Filter
     const queryObj = { ...req.query }; // ?price=100&category=electronics&page=2&limit=10&sort=-price,createdAt
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
-    excludedFields.forEach(field => delete queryObj[field]);
+    excludedFields.forEach(field => delete queryObj[field]); // we are going for only simple queries now...
+    // For advanced searching we might use ?price[gte]=100&price[lte]=200 and replace it with $gte : 100 $lte : 200 with regex 
 
     // 2. Initialize Query
     let query = Model.find(queryObj);
