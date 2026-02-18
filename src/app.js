@@ -4,6 +4,9 @@ import express from 'express'
 import globalErrorHandler from './controllers/errorController.js'
 import AppError from './utils/appError.js'
 
+// Swagger
+import setupSwagger from './swagger.js'
+
 // Import Routes 
 import userRoutes from './routes/userRoutes.js'
 // import productRoutes from './routes/productRoutes.js'
@@ -16,6 +19,9 @@ const app = express();
 
 // Global Middlewares
 app.use(express.json());
+
+// Swagger Docs
+setupSwagger(app);
 
 // Routes
 app.use(userRoutes);
