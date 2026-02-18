@@ -115,7 +115,7 @@ export default function emailTemplate(email, name) {
           <a href="http://localhost:3000/api/auth/${email}" class="btn-verify">Verify Now</a>
         </div>
         <div class="footer-text">
-          <p>If you did not request this OTP, please <a href="">contact us</a> immediately.</p>
+          <p>If you did not initiate this registration or request this email verification, please <a href="">contact us</a> immediately.</p>
           <p>Thank you,<br>The NodeMart Team</p>
         </div>
       </div>
