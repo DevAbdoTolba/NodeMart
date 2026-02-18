@@ -5,21 +5,20 @@ import dotenv from 'dotenv'
 
 dotenv.config({path: '../../.env'});
 
+const transporter = nodeMailer.createTransport({
+    service: 'gmail',
+    secure: false,
+    auth: {
+        user: process.env.EMAIL_SENDER,
+        pass: process.env.EMAIL_PASSWORD
+    }
+});
+
 export default async function sendEmail(email, name) {
-    const transporter = nodeMailer.createTransport({
-        service: 'gmail',
-        secure: false,
-        auth: {
-            user: 'you.mwork@gmail.com',
-            pass: 'zeiv fovz abqv dyyl'
-        }
-    });
-
-    const encryptedEmail = jwt.sign(email, process.env.TOKEN_SECRET_KEY);
-
+    const encryptedEmail = jwt.sign(email, process.env.TOKEN_SECRET_KEY, {expiresIn: '1h'});
     const emailInfo = await transporter.sendMail({
         to: email,
-        from: "you.mwork@gmail.com",
+        from: process.env.EMAIL_SENDER,
         subject: "SignedUp in NodeMart",
         text: "Thank You For Signing in NodeMart, Please Verify Your Email!",
         html: emailTemplate(encryptedEmail, name)

@@ -12,7 +12,7 @@ dotenv.config({path: '../../.env'});
 
 export async function Register(req, res, next) {
     const saltRounds = Number.parseInt(process.env.BCRYPT_SALT_ROUNDS);
-    req.body.password = bcrypt.hashSync(req.body.password, saltRounds);
+    req.body.password = await bcrypt.hash(req.body.password, saltRounds);
     const registerUser = apiHandler.createOne(userModel);
 
     const originalJson = res.json;
@@ -31,7 +31,7 @@ export async function Login(req, res, next) {
     const userCredentials = req.body;
     const findUser = await userModel.findOne({email: req.body.email});
     if(findUser) {
-        const checkPassword = bcrypt.compareSync(req.body.password, findUser.password);
+        const checkPassword = await bcrypt.compare(req.body.password, findUser.password);
         if(!checkPassword) return next(new AppError("email not found", 401));
         findUser.password = undefined;
         const token = jwt.sign({findUser}, process.env.TOKEN_SECRET_KEY);
@@ -46,6 +46,7 @@ export async function confirmEmail(req, res, next) {
     const updateUser = apiHandler.updateOne(userModel);
     req.params.searchBy = "email";
     req.params.value = email;
+    req.body = { status: "Approved"};
     let originalJson = res.json;
     res.json = body => originalJson.call(res, "email verified successfully");
     return updateUser(req, res, next);
