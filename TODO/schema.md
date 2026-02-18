@@ -6,7 +6,7 @@ db.createCollection("users", {
       properties: {
         _id: { bsonType: "objectId" },
         status: { 
-          enum: ["Guest", "Approved", "Restricted", "Deleted"],
+          enum: ["Guest", "Approved", "Restricted", "Deleted", "Unverified"],
           description: "Status is required for everyone"
         },
         cart: { bsonType: "array" }, // Guests need a cart

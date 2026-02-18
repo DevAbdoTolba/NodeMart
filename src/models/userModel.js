@@ -3,24 +3,24 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
+        required: function() {return this.status != "Guest"},
         trim: true
     },
     email: {
         type: String,
-        required: true,
+        required: function() {return this.status != "Guest"},
         unique: true,
         lowercase: true,
         trim: true
     },
     phone: {
         type: String,
-        required: true,
+        required: function() {return this.status != "Guest"},
         trim: true
     },
     password: {
         type: String,
-        required: true
+        required: function() {return this.status != "Guest"}
     },
     role: {
         type: String,
