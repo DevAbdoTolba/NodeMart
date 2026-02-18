@@ -8,7 +8,7 @@ import AppError from './utils/appError.js'
 import setupSwagger from './swagger.js'
 
 // Import Routes 
-// import userRoutes from './routes/userRoutes.js'
+import userRoutes from './routes/userRoutes.js'
 // import productRoutes from './routes/productRoutes.js'
 // import categoryRoutes from './routes/categoryRoutes.js'
 // import orderRoutes from './routes/orderRoutes.js'
@@ -24,7 +24,7 @@ app.use(express.json());
 setupSwagger(app);
 
 // Routes
-// app.use('/api/users', userRoutes);
+app.use(userRoutes);
 // app.use('/api/products', productRoutes);
 // app.use('/api/categories', categoryRoutes);
 // app.use('/api/orders', orderRoutes);
