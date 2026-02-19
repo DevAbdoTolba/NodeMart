@@ -1,9 +1,10 @@
 import Order from "../models/orderModel.js";
+import catchAsync from "../utils/catchAsync.js";
 
-export const getOrders = async (req, res) => {
+export const getOrders = catchAsync(async (req, res, next) => {
   const orders = await Order.find().populate("user");
   res.status(200).json({ status: "success", results: orders.length, data: orders });
-};
+});
 
 export const updateOrderStatus = async (req, res) => {
   try {
