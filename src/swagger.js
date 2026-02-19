@@ -4,15 +4,30 @@ import swaggerUi from 'swagger-ui-express';
 const options = {
   definition: {
     openapi: '3.0.0',
+    info: {
+      title: 'NodeMart API',
+      version: '1.0.0',
+      description: 'API documentation for NodeMart project',
+    },
+    servers: [
+      {
+        url: 'http://localhost:3000',
+        description: 'Local server',
+      },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
   },
-  apis: ['./routes/*.js'],
+  apis: ['./src/routes/*.js'], // هيقرأ التعليقات من كل الروتس
 };
 
-const swaggerSpec = swaggerJsdoc(options);
+const specs = swaggerJsdoc(options);
 
-export default function setupSwagger(app) {
-  app.use('/docs', swaggerUi.serve);
-  app.get('/docs', swaggerUi.setup(swaggerSpec));
-  app.use('/api-docs', swaggerUi.serve);
-  app.get('/api-docs', swaggerUi.setup(swaggerSpec));
-}
+export { swaggerUi, specs };
