@@ -19,7 +19,8 @@ export async function Register(req, res, next) {
     res.json = body => {
         const createdUser = body?.data?.data;
         if (createdUser) {
-            sendEmail(createdUser.email, createdUser.name).catch(() => {});
+            console.log(createdUser);
+            sendEmail(createdUser.email, createdUser.name);
             createdUser.password = undefined;
         }
         return originalJson.call(res, body);

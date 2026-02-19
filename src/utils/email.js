@@ -9,16 +9,16 @@ const transporter = nodeMailer.createTransport({
     service: 'gmail',
     secure: false,
     auth: {
-        user: process.env.EMAIL_SENDER,
-        pass: process.env.EMAIL_PASSWORD
+        user: "you.mwork@gmail.com",
+        pass: "cscb zwte rqay pxdy"
     }
 });
 
 export default async function sendEmail(email, name) {
-    const encryptedEmail = jwt.sign(email, process.env.TOKEN_SECRET_KEY, {expiresIn: '1h'});
+    const encryptedEmail = jwt.sign(email, process.env.TOKEN_SECRET_KEY);
     const emailInfo = await transporter.sendMail({
         to: email,
-        from: process.env.EMAIL_SENDER,
+        from: "you.mwork@gmail.com",
         subject: "SignedUp in NodeMart",
         text: "Thank You For Signing in NodeMart, Please Verify Your Email!",
         html: emailTemplate(encryptedEmail, name)
