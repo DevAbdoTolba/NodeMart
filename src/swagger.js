@@ -2,16 +2,18 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
 const options = {
-  definition: {
+  swaggerDefinition: {
     openapi: '3.0.0',
-  },
-      components: {
-      securitySchemes: {
-        tokenAuth: {
-          type: 'apiKey',
-          in: 'header',
-          name: 'token',
-        },
+    info: {
+      title: 'My API',       // Added info block (Required by OpenAPI 3)
+      version: '1.0.0',
+    },
+    components: {
+    securitySchemes: {
+      tokenAuth: {     
+        type: 'apiKey',
+        in: 'header',
+        name: 'token',  
       },
     },
     security: [
@@ -19,14 +21,25 @@ const options = {
         tokenAuth: [],
       },
     ],
+  },
+},
   apis: ['./routes/*.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
 
 export default function setupSwagger(app) {
-  app.use('/docs', swaggerUi.serve);
-  app.get('/docs', swaggerUi.setup(swaggerSpec));
-  app.use('/api-docs', swaggerUi.serve);
-  app.get('/api-docs', swaggerUi.setup(swaggerSpec));
+  app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  
+  app.get('/docs.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+  });
+
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  
+  app.get('/api-docs.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+  });
 }
