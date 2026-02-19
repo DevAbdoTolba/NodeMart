@@ -14,6 +14,7 @@ import userRoutes from './routes/userRoutes.js'
 // import orderRoutes from './routes/orderRoutes.js'
 // import cartRoutes from './routes/cartRoutes.js'
 // import reviewRoutes from './routes/reviewRoutes.js'
+import adminRoutes from './routes/adminRoutes.js'
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use(userRoutes);
 // app.use('/api/orders', orderRoutes);
 // app.use('/api/cart', cartRoutes);
 // app.use('/api/reviews', reviewRoutes);
+app.use('/api/admin',adminRoutes);
 
 // 404 Handler
 app.use(
