@@ -7,7 +7,7 @@ export const protect = async (req, res, next) => {
 
   // 2. If it's missing, reject the request
   if (!token) {
-    return res.status(401).json({ status: "fail", message: "You are not logged in. Please provide a token header." });
+    return res.status(401).json({ status: "fail", message: "You are not logged in. Please provide a 'token' header." });
   }
 
   try {
