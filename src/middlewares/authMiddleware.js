@@ -29,7 +29,11 @@ export const protect = async (req, res, next) => {
     req.user = currentUser;
     next();
   } catch (err) {
-    console.log(err);
+    if (process.env.NODE_ENV !== "production") {
+      console.error("JWT verification error:", err);
+    } else {
+      console.error("JWT verification error:", err && err.message ? err.message : "Unknown error");
+    }
     
     res.status(401).json({ status: "fail", message: "Invalid token" });
   }
