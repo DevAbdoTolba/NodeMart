@@ -40,7 +40,7 @@ const mapTokenParamToEmail = (req, res, next) => {
  *                 enum: [customer, admin]
  *               status:
  *                 type: string
- *                 enum: [Guest, Approved, Restricted, Deleted, Unverified]
+ *                 enum: [Unverified, Approved, Restricted, Deleted, Guest]
  *     responses:
  *       201:
  *         description: User registered successfully
@@ -66,8 +66,10 @@ userRouter.post("/api/auth/register", validateEmail, validateData, Register);
  *               email:
  *                 type: string
  *                 format: email
+ *                 example: nesmaaa@example.com
  *               password:
  *                 type: string
+ *                 example: my@Password123
  *     responses:
  *       200:
  *         description: Login successful
