@@ -105,12 +105,14 @@ export const addItemToCart = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    message: 'Item added to cart',
-    token: owner.token,
-    isGuestCreated: owner.isGuestCreated,
     data: {
-      userId: user._id,
-      cart: user.cart
+      message: 'Item added to cart',
+      token: owner.token,
+      isGuestCreated: owner.isGuestCreated,
+      data: {
+        userId: user._id,
+        cart: user.cart
+      }
     }
   });
 });
@@ -137,12 +139,14 @@ export const updateCartItemQuantity = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    message: 'Cart item quantity updated',
-    token: owner.token,
-    isGuestCreated: owner.isGuestCreated,
     data: {
-      userId: user._id,
-      cart: user.cart
+      message: 'Cart item quantity updated',
+      token: owner.token,
+      isGuestCreated: owner.isGuestCreated,
+      data: {
+        userId: user._id,
+        cart: user.cart
+      }
     }
   });
 });
@@ -168,12 +172,14 @@ export const deleteCartItem = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    message: 'Cart item removed',
-    token: owner.token,
-    isGuestCreated: owner.isGuestCreated,
     data: {
-      userId: user._id,
-      cart: user.cart
+      message: 'Cart item removed',
+      token: owner.token,
+      isGuestCreated: owner.isGuestCreated,
+      data: {
+        userId: user._id,
+        cart: user.cart
+      }
     }
   });
 });
