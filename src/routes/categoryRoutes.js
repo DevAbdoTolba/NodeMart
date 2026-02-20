@@ -1,0 +1,96 @@
+import express from "express";
+import * as categoryController from "../controllers/categoryController.js";
+
+const router = express.Router();
+
+/**
+ * @swagger
+ * tags:
+ *   name: Categories
+ *   description: Category management APIs
+ */
+
+/**
+ * @swagger
+ * /api/v1/categories:
+ *   get:
+ *     summary: Get all categories
+ *     tags: [Categories]
+ *     responses:
+ *       200:
+ *         description: List of all categories
+ */
+router.get("/", categoryController.getAllCategories);
+
+/**
+ * @swagger
+ * /api/v1/categories:
+ *   post:
+ *     summary: Create new category
+ *     tags: [Categories]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Category created successfully
+ */
+router.post("/", categoryController.createCategory);
+
+/**
+ * @swagger
+ * /api/v1/categories/{id}:
+ *   get:
+ *     summary: Get single category
+ *     tags: [Categories]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Category data
+ */
+router.get("/:id", categoryController.getCategory);
+
+/**
+ * @swagger
+ * /api/v1/categories/{id}:
+ *   patch:
+ *     summary: Update category
+ *     tags: [Categories]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ */
+router.patch("/:id", categoryController.updateCategory);
+
+/**
+ * @swagger
+ * /api/v1/categories/{id}:
+ *   delete:
+ *     summary: Delete category
+ *     tags: [Categories]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ */
+router.delete("/:id", categoryController.deleteCategory);
+
+export default router;
