@@ -15,7 +15,7 @@ const transporter = nodeMailer.createTransport({
 });
 
 export default async function sendEmail(email, name) {
-    const encryptedEmail = jwt.sign(email, process.env.TOKEN_SECRET_KEY);
+    const encryptedEmail = jwt.sign({email: email}, process.env.TOKEN_SECRET_KEY, {expiresIn: '1h'});
     const emailInfo = await transporter.sendMail({
         to: email,
         from: "you.mwork@gmail.com",

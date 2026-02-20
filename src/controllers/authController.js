@@ -19,7 +19,7 @@ export async function Register(req, res, next) {
     res.json = body => {
         const createdUser = body?.data?.data;
         if (createdUser) {
-            console.log(createdUser);
+            // console.log(createdUser);
             sendEmail(createdUser.email, createdUser.name);
             createdUser.password = undefined;
         }
@@ -35,7 +35,7 @@ export async function Login(req, res, next) {
         const checkPassword = await bcrypt.compare(req.body.password, findUser.password);
         if(!checkPassword) return next(new AppError("Wrong credentials", 401));
         findUser.password = undefined;
-        const token = jwt.sign({findUser}, process.env.TOKEN_SECRET_KEY);
+        const token = jwt.sign({data: findUser}, process.env.TOKEN_SECRET_KEY);
         res.status(200).json({message: "login successful", token: token});
     } else {
         next(new AppError("Wrong credentials", 401));
@@ -43,7 +43,7 @@ export async function Login(req, res, next) {
 }
 
 export async function confirmEmail(req, res, next) {
-    const email = jwt.verify(req.params.email, process.env.TOKEN_SECRET_KEY);
+    const {email} = jwt.verify(req.params.email, process.env.TOKEN_SECRET_KEY);
     const updateUser = apiHandler.updateOne(userModel);
     req.params.searchBy = "email";
     req.params.value = email;

@@ -41,7 +41,7 @@ const resolveCartOwner = async (req, next) => {
       status: 'Guest'
     });
 
-    const guestToken = jwt.sign({ findUser: guest }, process.env.TOKEN_SECRET_KEY);
+    const guestToken = jwt.sign({ data: guest }, process.env.TOKEN_SECRET_KEY);
     return { user: guest, token: guestToken, isGuestCreated: true };
   }
 
@@ -53,7 +53,7 @@ const resolveCartOwner = async (req, next) => {
   }
 
   const userId =
-    decoded?.findUser?._id ||
+    decoded?.data?._id ||
     decoded?._id ||
     decoded?.id ||
     decoded?.userId;
@@ -87,7 +87,7 @@ export const addItemToCart = catchAsync(async (req, res, next) => {
   }
 
   user.cart = mergeCartDuplicates(user.cart);
-  await user.save();
+  await userModel.findByIdAndUpdate(user._id, {cart: user.cart});
 
   res.status(200).json({
     status: 'success',
