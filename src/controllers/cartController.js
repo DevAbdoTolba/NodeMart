@@ -5,6 +5,20 @@ import jwt from 'jsonwebtoken';
 import { v7 as uuid } from 'uuid';
 
 
+export const getCartItems = async (req, res, next) => {
+  const token = req.headers.token;
+  if(!token) return next(new AppError("invalid token"));
+  const {data} = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
+  const user = await userModel.findById(data._id);
+  if(!user) return next(new AppError("user not found"));
+  res.status(200).json({
+    status: 'success',
+    data: {
+      data: user.cart
+    }
+  })
+}
+
 const toPositiveInt = (value, fallback = null) => {
   const parsed = Number.parseInt(value, 10);
   if (!Number.isFinite(parsed) || parsed <= 0) return fallback;
