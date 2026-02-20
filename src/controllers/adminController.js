@@ -1,6 +1,5 @@
 import Order from "../models/orderModel.js";
 import catchAsync from "../utils/catchAsync.js";
-import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 
 export const getOrders = async (req, res) => {
