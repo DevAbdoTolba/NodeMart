@@ -13,7 +13,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/reviews:
+ * /api/reviews:
  *   get:
  *     summary: Get all reviews
  *     tags: [Reviews]
@@ -25,12 +25,12 @@ router.get("/", reviewController.getAllReviews);
 
 /**
  * @swagger
- * /api/v1/reviews:
+ * /api/reviews:
  *   post:
  *     summary: Create a review
  *     tags: [Reviews]
  *     security:
- *       - bearerAuth: []
+ *       - tokenAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -63,7 +63,7 @@ router.post("/", protect, reviewController.createReview);
 
 /**
  * @swagger
- * /api/v1/reviews/{id}:
+ * /api/reviews/{id}:
  *   get:
  *     summary: Get review by ID
  *     tags: [Reviews]
@@ -81,12 +81,12 @@ router.get("/:id", reviewController.getReview);
 
 /**
  * @swagger
- * /api/v1/reviews/{id}:
+ * /api/reviews/{id}:
  *   delete:
  *     summary: Delete a review
  *     tags: [Reviews]
  *     security:
- *       - bearerAuth: []
+ *       - tokenAuth: []
  *     parameters:
  *       - name: id
  *         in: path

@@ -12,7 +12,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/products:
+ * /api/products:
  *   get:
  *     summary: Get all products
  *     tags: [Products]
@@ -24,7 +24,7 @@ router.get("/", productController.getAllProducts);
 
 /**
  * @swagger
- * /api/v1/products:
+ * /api/products:
  *   post:
  *     summary: Create new product
  *     tags: [Products]
@@ -47,7 +47,7 @@ router.post("/", productController.createProduct);
 
 /**
  * @swagger
- * /api/v1/products/{id}:
+ * /api/products/{id}:
  *   get:
  *     summary: Get single product
  *     tags: [Products]
@@ -65,7 +65,7 @@ router.get("/:id", productController.getProduct);
 
 /**
  * @swagger
- * /api/v1/products/{id}:
+ * /api/products/{id}:
  *   patch:
  *     summary: Update product
  *     tags: [Products]
@@ -74,10 +74,19 @@ router.patch("/:id", productController.updateProduct);
 
 /**
  * @swagger
- * /api/v1/products/{id}:
+ * /api/products/{id}:
  *   delete:
  *     summary: Delete product
  *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Product deleted successfully
  */
 router.delete("/:id", productController.deleteProduct);
 

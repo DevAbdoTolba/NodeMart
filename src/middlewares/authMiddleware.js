@@ -14,10 +14,10 @@ export const protect = async (req, res, next) => {
     // 3. Verify the token
     const decoded = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
     
-    // console.log("DECODED: ",decoded.findUser._id);
+    // console.log("DECODED: ",decoded.data._id);
 
     // 4. Find the user
-    const currentUser = await User.findById(decoded.findUser._id);
+    const currentUser = await User.findById(decoded.data._id);
     
     // console.log(currentUser);
     
