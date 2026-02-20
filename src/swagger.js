@@ -2,32 +2,44 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
 const options = {
-  definition: {
+  swaggerDefinition: {
     openapi: '3.0.0',
     info: {
-      title: 'NodeMart API',
+      title: 'My API',       // Added info block (Required by OpenAPI 3)
       version: '1.0.0',
-      description: 'API documentation for NodeMart project',
     },
-    servers: [
+    components: {
+    securitySchemes: {
+      tokenAuth: {     
+        type: 'apiKey',
+        in: 'header',
+        name: 'token',  
+      },
+    },
+    security: [
       {
-        url: 'http://localhost:3000',
-        description: 'Local server',
+        tokenAuth: [],
       },
     ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-        },
-      },
-    },
   },
-  apis: ['./src/routes/*.js'], // هيقرأ التعليقات من كل الروتس
+},
+  apis: ['./routes/*.js'],
 };
 
 const specs = swaggerJsdoc(options);
 
-export { swaggerUi, specs };
+export default function setupSwagger(app) {
+  app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  
+  app.get('/docs.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+  });
+
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  
+  app.get('/api-docs.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+  });
+}
