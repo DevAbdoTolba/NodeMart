@@ -3,35 +3,25 @@ import catchAsync from '../utils/catchAsync.js';
 import AppError from '../utils/appError.js';
 import jwt from 'jsonwebtoken';
 import { v7 as uuid } from 'uuid';
-// import productModel from '../models/productModel.js';
+import paypal from '@paypal/checkout-server-sdk';
+import { client } from '../utils/paymentSetup.js';
+import productModel from '../models/productModel.js';
 import { addOrder } from './orderController.js';
 import orderModel from '../models/orderModel.js';
 
-
-export const getCartItems = catchAsync(async (req, res, next) => {
+export const getCartItems = async (req, res, next) => {
   const token = req.headers.token;
-  if (!token) return next(new AppError('Token is required', 401));
-
-  let decoded;
-  try {
-    decoded = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
-  } catch (err) {
-    return next(new AppError('Invalid or expired token', 401));
-  }
-
-  const userId = decoded?.data?._id || decoded?._id || decoded?.id || decoded?.userId;
-  if (!userId) return next(new AppError('Token payload is invalid', 401));
-
-  const user = await userModel.findById(userId);
-  if (!user) return next(new AppError('User not found', 404));
-
+  if(!token) return next(new AppError("invalid token"));
+  const {data} = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
+  const user = await userModel.findById(data._id);
+  if(!user) return next(new AppError("user not found"));
   res.status(200).json({
     status: 'success',
     data: {
       data: user.cart
     }
-  });
-});
+  })
+}
 
 const toPositiveInt = (value, fallback = null) => {
   const parsed = Number.parseInt(value, 10);
@@ -62,7 +52,6 @@ const mergeCartDuplicates = (cart = []) => {
 const resolveCartOwner = async (req, next) => {
   const token = req.headers.token;
 
-  // If token does not exist -> create guest (same idea as addGuest in authController)
   if (!token) {
     const guest = await userModel.create({
       email: uuid(),
@@ -205,7 +194,7 @@ export const deleteCartItem = catchAsync(async (req, res, next) => {
 const processCart = async (cart) => {
   let newCart = [];
   let sum = 0;
-  for(item of cart) {
+  for(let item of cart) {
     let product = await productModel.findById(item.productId) || true;
     if(product) {
       if(product.stock < item.quantity) throw new AppError(`${product.name} stock is below your order`);
@@ -238,15 +227,15 @@ export const checkout = catchAsync(async (req, res, next) => {
     return next(error);
   }
 
-
   if (req.body.paymentMethod == "wallet") {
     if (user.walletBalance == null) return next(new AppError("User wallet not found"));
-    if(totalPrice > user.walletBalance) {
+    
+    if(processedCart.totalPrice > user.walletBalance) { 
       return next(new AppError("not enough balance"));
     }
     const updatedUser = await userModel.findByIdAndUpdate(
       user._id,
-      { cart: [], walletBalance: user.walletBalance - totalPrice }
+      { cart: [], walletBalance: user.walletBalance - processedCart.totalPrice }
     );
     if (!updatedUser) {
       return next(new AppError("User not found"));
