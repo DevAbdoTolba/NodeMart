@@ -17,7 +17,7 @@ token: jsonpath "$.token"
 POST http://localhost:3000/api/categories
 Content-Type: application/json
 {
-  "name": "Electronics"
+  "name": "Electronics {{unix_timestamp}}"
 }
 HTTP 201
 [Captures]
@@ -31,7 +31,7 @@ HTTP 200
 PATCH http://localhost:3000/api/categories/{{category_id}}
 Content-Type: application/json
 {
-  "name": "Updated Electronics"
+  "name": "Updated Electronics {{unix_timestamp}}"
 }
 HTTP 200
 
