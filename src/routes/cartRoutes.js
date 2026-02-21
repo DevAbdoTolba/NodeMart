@@ -5,6 +5,7 @@ import {
   deleteCartItem,
   getCartItems
 } from '../controllers/cartController.js';
+import { validateAddToCart, validateUpdateCart, validateId } from '../middlewares/validationMiddleware.js';
 
 const cartRouter = express.Router();
 
@@ -68,7 +69,7 @@ cartRouter.get('/api/cart', getCartItems)
  *       400:
  *         description: Missing productId or invalid quantity
  */
-cartRouter.post('/api/cart', addItemToCart);
+cartRouter.post('/api/cart', validateAddToCart, addItemToCart);
 
 /**
  * @swagger
@@ -105,7 +106,7 @@ cartRouter.post('/api/cart', addItemToCart);
  *       404:
  *         description: Cart item not found
  */
-cartRouter.patch('/api/cart/:itemId', updateCartItemQuantity);
+cartRouter.patch('/api/cart/:itemId', validateId('itemId'), validateUpdateCart, updateCartItemQuantity);
 
 /**
  * @swagger
@@ -131,6 +132,6 @@ cartRouter.patch('/api/cart/:itemId', updateCartItemQuantity);
  *       404:
  *         description: Cart item not found
  */
-cartRouter.delete('/api/cart/:itemId', deleteCartItem);
+cartRouter.delete('/api/cart/:itemId', validateId('itemId'), deleteCartItem);
 
 export default cartRouter;

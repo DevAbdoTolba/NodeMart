@@ -1,6 +1,7 @@
 import express from "express";
 import * as reviewController from "../controllers/reviewController.js";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
+import { validateCreateReview, validateId } from "../middlewares/validationMiddleware.js";
 
 const router = express.Router();
 
@@ -59,7 +60,7 @@ router.get("/", reviewController.getAllReviews);
  *       201:
  *         description: Review created successfully
  */
-router.post("/", protect, reviewController.createReview);
+router.post("/", protect, validateCreateReview, reviewController.createReview);
 
 /**
  * @swagger
@@ -77,7 +78,7 @@ router.post("/", protect, reviewController.createReview);
  *       200:
  *         description: Review details
  */
-router.get("/:id", reviewController.getReview);
+router.get("/:id", validateId(), reviewController.getReview);
 
 /**
  * @swagger
@@ -97,6 +98,6 @@ router.get("/:id", reviewController.getReview);
  *       204:
  *         description: Review deleted successfully
  */
-router.delete("/:id", protect, restrictTo("admin"), reviewController.deleteReview);
+router.delete("/:id", validateId(), protect, restrictTo("admin"), reviewController.deleteReview);
 
 export default router;

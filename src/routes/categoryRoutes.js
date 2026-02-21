@@ -1,5 +1,6 @@
 import express from "express";
 import * as categoryController from "../controllers/categoryController.js";
+import { validateCreateCategory, validateUpdateCategory, validateId } from "../middlewares/validationMiddleware.js";
 
 const router = express.Router();
 
@@ -43,7 +44,7 @@ router.get("/", categoryController.getAllCategories);
  *       201:
  *         description: Category created successfully
  */
-router.post("/", categoryController.createCategory);
+router.post("/", validateCreateCategory, categoryController.createCategory);
 
 /**
  * @swagger
@@ -61,7 +62,7 @@ router.post("/", categoryController.createCategory);
  *       200:
  *         description: Category data
  */
-router.get("/:id", categoryController.getCategory);
+router.get("/:id", validateId(), categoryController.getCategory);
 
 /**
  * @swagger
@@ -90,7 +91,7 @@ router.get("/:id", categoryController.getCategory);
  *       200:
  *         description: Category updated successfully
  */
-router.patch("/:id", categoryController.updateCategory);
+router.patch("/:id", validateId(), validateUpdateCategory, categoryController.updateCategory);
 
 /**
  * @swagger
@@ -110,6 +111,6 @@ router.patch("/:id", categoryController.updateCategory);
  *       404:
  *         description: Category not found
  */
-router.delete("/:id", categoryController.deleteCategory);
+router.delete("/:id", validateId(), categoryController.deleteCategory);
 
 export default router;

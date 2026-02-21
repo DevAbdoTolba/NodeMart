@@ -4,6 +4,7 @@
  import { protect, restrictTo } from '../middlewares/authMiddleware.js'
  import { validateEmail } from '../middlewares/validateEmail.js';
  import { validateData } from '../middlewares/validateData.js'
+ import { validateLogin, validateUpdateMe, validateUpdateUserStatus, validateId } from '../middlewares/validationMiddleware.js'
  
  const userRouter = express.Router();
  
@@ -78,7 +79,7 @@
   *       401:
   *         description: Wrong credentials
   */
- userRouter.post("/api/auth/login", Login);
+ userRouter.post("/api/auth/login", validateLogin, Login);
  
  /**
   * @swagger
@@ -156,7 +157,7 @@
   *       200:
   *         description: User updated
   */
- userRouter.patch("/api/user/me", protect, updateMe);
+ userRouter.patch("/api/user/me", protect, validateUpdateMe, updateMe);
  
  /**
   * @swagger
@@ -201,6 +202,6 @@
   *       404:
   *         description: User not found
   */
- userRouter.patch("/api/user/:id/status", protect, restrictTo("admin"), updateUserStatus);
+ userRouter.patch("/api/user/:id/status", protect, restrictTo("admin"), validateId('id'), validateUpdateUserStatus, updateUserStatus);
  
  export default userRouter;
