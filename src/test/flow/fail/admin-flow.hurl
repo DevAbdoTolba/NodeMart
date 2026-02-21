@@ -1,16 +1,16 @@
 # Admin Flow - Fail
 # No auth, non-admin access, invalid inputs
 
-# Admin orders without token -> 401
-GET http://localhost:3000/api/admin/orders
+# All orders without token -> 401
+GET http://localhost:3000/api/orders/admin/all
 HTTP 401
 
 # Admin stats without token -> 401
 GET http://localhost:3000/api/admin/stats
 HTTP 401
 
-# Admin orders with bad token -> 401
-GET http://localhost:3000/api/admin/orders
+# All orders with bad token -> 401
+GET http://localhost:3000/api/orders/admin/all
 token: badtoken
 HTTP 401
 
@@ -35,8 +35,8 @@ HTTP 200
 [Captures]
 regular_token: jsonpath "$.token"
 
-# Admin orders as regular user -> 403
-GET http://localhost:3000/api/admin/orders
+# All orders as regular user -> 403
+GET http://localhost:3000/api/orders/admin/all
 token: {{regular_token}}
 HTTP 403
 
@@ -45,8 +45,8 @@ GET http://localhost:3000/api/admin/stats
 token: {{regular_token}}
 HTTP 403
 
-# Admin update order as regular user -> 403 (restrictTo blocks before validateId)
-PATCH http://localhost:3000/api/admin/orders/not-valid-id
+# Update order status as regular user -> 403
+PATCH http://localhost:3000/api/orders/aaaaaaaaaaaaaaaaaaaaaaaa/status
 Content-Type: application/json
 token: {{regular_token}}
 {
@@ -74,8 +74,8 @@ HTTP 200
 [Captures]
 admin_token: jsonpath "$.token"
 
-# Update order with invalid ID -> 400 (admin token so restrictTo passes, validateId catches)
-PATCH http://localhost:3000/api/admin/orders/not-valid-id
+# Update order with invalid ID -> 400
+PATCH http://localhost:3000/api/orders/not-valid-id/status
 Content-Type: application/json
 token: {{admin_token}}
 {
@@ -84,7 +84,7 @@ token: {{admin_token}}
 HTTP 400
 
 # Update order with invalid status -> 400
-PATCH http://localhost:3000/api/admin/orders/aaaaaaaaaaaaaaaaaaaaaaaa
+PATCH http://localhost:3000/api/orders/aaaaaaaaaaaaaaaaaaaaaaaa/status
 Content-Type: application/json
 token: {{admin_token}}
 {

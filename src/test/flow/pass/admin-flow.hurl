@@ -57,7 +57,7 @@ Content-Type: application/json
 HTTP 200
 
 # Get Orders
-GET http://localhost:3000/api/admin/orders
+GET http://localhost:3000/api/orders/admin/all
 token: {{token}}
 HTTP 200
 
