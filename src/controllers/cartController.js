@@ -246,7 +246,13 @@ export const checkout = catchAsync(async (req, res, next) => {
     if(totalPrice > user.walletBalance) {
       return next(new AppError("not enough balance"));
     }
-    userModel.findByIdAndUpdate(user._id, {cart: [], walletBalance: user.walletBalance-totalPrice});
+    const updatedUser = await userModel.findByIdAndUpdate(
+      user._id,
+      { cart: [], walletBalance: user.walletBalance - totalPrice }
+    );
+    if (!updatedUser) {
+      return next(new AppError("User not found"));
+    }
     let order = await addOrder(processedCart, user._id);
     if(order) {
       return res.status(200).json({status: "success", data: order});
