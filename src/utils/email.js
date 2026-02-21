@@ -1,1 +1,25 @@
-// Email sending logic
+import nodeMailer from 'nodemailer'
+import jwt from 'jsonwebtoken'
+import emailTemplate from './emailTemplate.js'
+import dotenv from 'dotenv'
+
+
+const transporter = nodeMailer.createTransport({
+    service: 'gmail',
+    secure: false,
+    auth: {
+        user: "you.mwork@gmail.com",
+        pass: "cscb zwte rqay pxdy"
+    }
+});
+
+export default async function sendEmail(email, name) {
+    const encryptedEmail = jwt.sign({email: email}, process.env.TOKEN_SECRET_KEY, {expiresIn: '1h'});
+    const emailInfo = await transporter.sendMail({
+        to: email,
+        from: "you.mwork@gmail.com",
+        subject: "SignedUp in NodeMart",
+        text: "Thank You For Signing in NodeMart, Please Verify Your Email!",
+        html: emailTemplate(encryptedEmail, name)
+    })
+}
