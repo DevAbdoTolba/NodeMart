@@ -1,51 +1,66 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: function() {return this.status != "Guest"},
-        trim: true
+      type: String,
+      required: [true, "Name is required"],
+      trim: true,
     },
     email: {
-        type: String,
-        required: function() {return this.status != "Guest"},
-        unique: true,
-        lowercase: true,
-        trim: true
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      lowercase: true,
     },
     phone: {
-        type: String,
-        required: function() {return this.status != "Guest"},
-        trim: true
+      type: String,
+      trim: true,
     },
     password: {
-        type: String,
-        required: function() {return this.status != "Guest"}
+      type: String,
+      required: [true, "Password is required"],
+      minlength: 6,
+      select: false,
     },
     role: {
-        type: String,
-        enum: ["customer", "admin"],
-        default: "customer"
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
     },
     status: {
-        type: String,
-        enum: ["Guest", "Approved", "Restricted", "Deleted", "Unverified"],
-        default: "Unverified"
+      type: String,
+      enum: ["Unverified", "Approved", "Restricted", "Deleted", "Guest"],
+      default: "Unverified",
     },
-    cart: {
-        type: Array,
-        default: []
+    isBlocked: {
+      type: Boolean,
+      default: false,
     },
-    wishlist: {
-        type: Array,
-        default: []
-    },
+    cart: [
+      {
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+        },
+        quantity: Number,
+      },
+    ],
     walletBalance: {
-        type: Number,
-        default: 0
-    }
-})
+      type: Number,
+      default: 0,
+    },
+  },
+  { timestamps: true }
+);
 
-const userModel = mongoose.model("User", userSchema);
+// Password check method
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
-export default userModel;
+export default mongoose.model("User", userSchema);

@@ -1,6 +1,7 @@
 import express from "express";
 import { getOrders, updateOrderStatus, getStats } from "../controllers/adminController.js";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
+import { validateUpdateOrderStatus, validateId } from "../middlewares/validationMiddleware.js";
 
 const router = express.Router();
 
@@ -113,7 +114,7 @@ router.use(protect);
 router.use(restrictTo("admin"));
 
 router.get("/orders", getOrders);
-router.patch("/orders/:id", updateOrderStatus);
+router.patch("/orders/:id", validateId(), validateUpdateOrderStatus, updateOrderStatus);
 router.get("/stats", getStats);
 
 export default router;

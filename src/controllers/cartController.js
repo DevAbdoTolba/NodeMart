@@ -8,19 +8,30 @@ import { addOrder } from './orderController.js';
 import orderModel from '../models/orderModel.js';
 
 
-export const getCartItems = async (req, res, next) => {
+export const getCartItems = catchAsync(async (req, res, next) => {
   const token = req.headers.token;
-  if(!token) return next(new AppError("invalid token"));
-  const {data} = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
-  const user = await userModel.findById(data._id);
-  if(!user) return next(new AppError("user not found"));
+  if (!token) return next(new AppError('Token is required', 401));
+
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
+  } catch (err) {
+    return next(new AppError('Invalid or expired token', 401));
+  }
+
+  const userId = decoded?.data?._id || decoded?._id || decoded?.id || decoded?.userId;
+  if (!userId) return next(new AppError('Token payload is invalid', 401));
+
+  const user = await userModel.findById(userId);
+  if (!user) return next(new AppError('User not found', 404));
+
   res.status(200).json({
     status: 'success',
     data: {
       data: user.cart
     }
-  })
-}
+  });
+});
 
 const toPositiveInt = (value, fallback = null) => {
   const parsed = Number.parseInt(value, 10);
