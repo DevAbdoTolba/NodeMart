@@ -21,7 +21,9 @@ export async function createReview(req, res, next) {
 
     res.status(201).json({
       status: "success",
-      data: newReview,
+      data: {
+        data: newReview,
+      },
     });
   } catch (err) {
     if (err.code === 11000) {
