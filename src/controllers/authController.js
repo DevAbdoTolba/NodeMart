@@ -1,13 +1,10 @@
 import * as bcrypt from 'bcrypt'
-import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
 import { v7 as uuid } from 'uuid'
 import userModel from '../models/userModel.js'
 import * as apiHandler from './handlerFactory.js'
 import sendEmail from '../utils/email.js'
 import AppError from '../utils/appError.js'
-
-dotenv.config({path: '../../.env'});
 
 
 export async function Register(req, res, next) {
@@ -30,7 +27,7 @@ export async function Register(req, res, next) {
 
 export async function Login(req, res, next) {
     const userCredentials = req.body;
-    const findUser = await userModel.findOne({email: req.body.email});
+    const findUser = await userModel.findOne({email: req.body.email}).select('+password');
     if(findUser) {
         const checkPassword = await bcrypt.compare(req.body.password, findUser.password);
         if(!checkPassword) return next(new AppError("Wrong credentials", 401));

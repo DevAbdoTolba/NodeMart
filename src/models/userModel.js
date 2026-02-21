@@ -1,51 +1,55 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: function() {return this.status != "Guest"},
-        trim: true
+      type: String,
+      required: [true, "Name is required"],
+      trim: true,
     },
     email: {
-        type: String,
-        required: function() {return this.status != "Guest"},
-        unique: true,
-        lowercase: true,
-        trim: true
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      lowercase: true,
     },
     phone: {
-        type: String,
-        required: function() {return this.status != "Guest"},
-        trim: true
+      type: String,
+      trim: true,
     },
     password: {
-        type: String,
-        required: function() {return this.status != "Guest"}
+      type: String,
+      required: [true, "Password is required"],
+      minlength: 6,
+      select: false,
     },
     role: {
-        type: String,
-        enum: ["customer", "admin"],
-        default: "customer"
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
     },
-    status: {
-        type: String,
-        enum: ["Guest", "Approved", "Restricted", "Deleted", "Unverified"],
-        default: "Unverified"
+    isBlocked: {
+      type: Boolean,
+      default: false,
     },
-    cart: {
-        type: Array,
-        default: []
-    },
-    wishlist: {
-        type: Array,
-        default: []
-    },
-    walletBalance: {
-        type: Number,
-        default: 0
-    }
-})
+  },
+  { timestamps: true }
+);
 
-const userModel = mongoose.model("User", userSchema);
+// Hash password before saving
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 12);
+  next();
+});
 
-export default userModel;
+// Password check method
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+export default mongoose.model("User", userSchema);
