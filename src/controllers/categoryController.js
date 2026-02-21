@@ -1,36 +1,8 @@
 import Category from "../models/categoryModel.js";
+import * as factory from "./handlerFactory.js";
 
-export const getAllCategories = async (req, res) => {
-  const categories = await Category.find();
-  res.status(200).json({ status: "success", data: categories });
-};
-
-export const createCategory = async (req, res) => {
-  const category = await Category.create(req.body);
-  res.status(201).json({ status: "success", data: category });
-};
-
-export const getCategory = async (req, res) => {
-  const category = await Category.findById(req.params.id);
-  if (!category) {
-    return res.status(404).json({ status: "fail", message: "Category not found" });
-  }
-  res.status(200).json({ status: "success", data: category });
-};
-
-export const updateCategory = async (req, res) => {
-  const category = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-
-  if (!category) {
-    return res.status(404).json({ status: "fail", message: "Category not found" });
-  }
-  res.status(200).json({ status: "success", data: category });
-};
-
-export const deleteCategory = async (req, res) => {
-  const category = await Category.findByIdAndDelete(req.params.id, { new: true });
-  if (!category) {
-    return res.status(404).json({ status: "fail", message: "Category not found" });
-  }
-  res.status(204).json({ status: "success", data: null });
-};
+export const getAllCategories = factory.getAll(Category);
+export const getCategory = factory.getOne(Category);
+export const createCategory = factory.createOne(Category);
+export const updateCategory = factory.updateOne(Category);
+export const deleteCategory = factory.deleteOne(Category);

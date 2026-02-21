@@ -1,4 +1,5 @@
 import joi from 'joi'
+import AppError from '../utils/appError.js'
 
 const userValidationSchema = joi.object({
     name: joi.string().min(3).max(60).required(),
@@ -16,11 +17,10 @@ const userValidationSchema = joi.object({
     walletBalance: joi.forbidden()
 });
 
-export async function validateData(req, res, next) {
+export function validateData(req, res, next) {
     const valid = userValidationSchema.validate(req.body, {allowUnknown: true});
     if(valid.error) {
-        res.status(400).json({message: valid.error.details[0].message});
-    } else {
-        next();
+        return next(new AppError(valid.error.details[0].message, 400));
     }
+    next();
 }

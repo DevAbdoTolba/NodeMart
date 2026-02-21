@@ -39,6 +39,13 @@ router.get("/", productController.getAllProducts);
  *                 type: string
  *               price:
  *                 type: number
+ *               stock:
+ *                 type: number
+ *               image:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *                 description: Category ID
  *     responses:
  *       201:
  *         description: Product created successfully
@@ -86,6 +93,13 @@ router.get("/:id", productController.getProduct);
  *                 type: string
  *               price:
  *                 type: number
+ *               stock:
+ *                 type: number
+ *               image:
+ *                 type: string
+ *               category:
+ *                 type: string
+ *                 description: Category ID
  *     responses:
  *       200:
  *         description: Product updated successfully
