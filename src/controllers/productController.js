@@ -14,12 +14,6 @@ export const getProduct = async (req, res) => {
   const product = await Product.findById(req.params.id).populate("category");
   if (!product) {
     return res.status(404).json({ status: "fail", message: "Product not found" });
-  const product = await Product.findById(req.params.id).populate("category");
-
-  if (!product) {
-    return res
-      .status(404)
-      .json({ status: "fail", message: "No product found with that ID" });
   }
 
   res.status(200).json({ status: "success", data: product });
@@ -28,11 +22,6 @@ export const getProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
-  if (!product) {
-    return res
-      .status(404)
-      .json({ status: "fail", message: "No product found with that ID" });
-  }
   if (!product) {
     return res.status(404).json({ status: "fail", message: "Product not found" });
   }
