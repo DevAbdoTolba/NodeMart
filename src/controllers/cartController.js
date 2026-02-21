@@ -298,5 +298,10 @@ export const checkout = catchAsync(async (req, res, next) => {
     order = await orderModel.create(order);
     
     res.status(200).json({status: "success", data: order});
+  } else {
+    return res.status(400).json({
+      status: "fail",
+      message: "Invalid payment method. Supported methods are 'wallet' and 'paypal'."
+    });
   }
 })
