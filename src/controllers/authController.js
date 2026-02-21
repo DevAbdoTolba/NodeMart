@@ -1,5 +1,4 @@
 import * as bcrypt from 'bcrypt'
-import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
 import { v7 as uuid } from 'uuid'
 import userModel from '../models/userModel.js'
