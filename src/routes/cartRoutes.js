@@ -7,7 +7,7 @@ import {
   checkout
 } from '../controllers/cartController.js';
 import {approvePayment} from '../utils/paymentSetup.js';
-import { validateAddToCart, validateUpdateCart, validateId } from '../middlewares/validationMiddleware.js';
+import { validateAddToCart, validateUpdateCart, validateCheckout, validateId } from '../middlewares/validationMiddleware.js';
 
 const cartRouter = express.Router();
 
@@ -98,7 +98,7 @@ cartRouter.post('/api/cart', validateAddToCart, addItemToCart);
  *       401:
  *         description: Not authenticated
  */
-cartRouter.post('/api/checkout', checkout);
+cartRouter.post('/api/checkout', validateCheckout, checkout);
 
 /**
  * @swagger
