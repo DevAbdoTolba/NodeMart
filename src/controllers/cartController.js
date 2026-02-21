@@ -3,6 +3,8 @@ import catchAsync from '../utils/catchAsync.js';
 import AppError from '../utils/appError.js';
 import jwt from 'jsonwebtoken';
 import { v7 as uuid } from 'uuid';
+import productModel from '../models/productModel.js';
+import { addOrder } from './orderController.js';
 
 
 export const getCartItems = async (req, res, next) => {
@@ -183,3 +185,45 @@ export const deleteCartItem = catchAsync(async (req, res, next) => {
     }
   });
 });
+
+const processCart = async (cart) => {
+  let newCart = [];
+  let sum = 0;
+  for(item of cart) {
+    let product = await productModel.findById(item.productId);
+    if(product.stock < item.quantity) return new AppError(`${product.name} stock is below your order`);
+    sum += product.price * item.quantity;
+    newCart.push({...product, quantity: item.quantity});
+  }
+  return {cart: newCart, totalPrice: sum};
+}
+
+export const checkout = catchAsync(async (req, res, next) => {
+  const token = req.headers.token;
+  if(!token) return next(new AppError("Invalid token"));
+
+  const {data} = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
+  const user = await userModel.findById(data._id).populate();
+  if(!user) return next(new AppError("User not found"));
+  
+  if(user.status == 'Guest') {
+    if(!req.body?.email || !req.body?.phone || !req.body?.address) 
+      return next(new AppError("missing contact data"));
+  }
+
+  if (req.body.paymentMethod == "wallet") {
+    if(!user.walletBalance || totalPrice > user.walletBalance) {
+      return next(new AppError("not enough balance"));
+    }
+    const processedCart = await processCart(user.cart);
+    userModel.findByIdAndUpdate(user._id, {cart: [], walletBalance: user.walletBalance-totalPrice});
+    let order = await addOrder(processedCart, user._id);
+    if(order) {
+      return res.status(200).json({status: "success", data: order});
+    } else {
+      return next(new AppError("order failed"));
+    }
+  } else {
+    // payByPayPal();
+  }
+})
