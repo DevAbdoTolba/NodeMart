@@ -214,8 +214,6 @@ const processCart = async (cart) => {
     } else {
       throw new AppError(`product(${item.productId}) not found`);
     }
-    sum += product.price * item.quantity;
-    newCart.push({...product, quantity: item.quantity});
   }
   return {cart: newCart, totalPrice: sum};
 }
