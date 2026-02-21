@@ -86,6 +86,13 @@ const updateCartSchema = joi.object({
 });
 export const validateUpdateCart = validate(updateCartSchema);
 
+// Checkout: address and phone are required (especially for guests who don't have them on file)
+const checkoutSchema = joi.object({
+    address: joi.string().required(),
+    phone: joi.string().required()
+});
+export const validateCheckout = validate(checkoutSchema);
+
 
 
 const updateOrderStatusSchema = joi.object({
