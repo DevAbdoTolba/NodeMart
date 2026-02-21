@@ -3,7 +3,8 @@ import {
   addItemToCart,
   updateCartItemQuantity,
   deleteCartItem,
-  getCartItems
+  getCartItems,
+  checkout
 } from '../controllers/cartController.js';
 import { validateAddToCart, validateUpdateCart, validateId } from '../middlewares/validationMiddleware.js';
 

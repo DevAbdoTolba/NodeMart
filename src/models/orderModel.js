@@ -26,6 +26,12 @@ const orderSchema = new mongoose.Schema(
       type: String,
       enum: ["Pending", "Shipped", "Delivered"],
       default: "Pending"
+    },
+    paypalOrderId: { type: String },
+    paymentStatus: {
+      type: String, 
+      enum: ["Pending", "Completed"], 
+      default: "Pending"
     }
   },
   { timestamps: true }
