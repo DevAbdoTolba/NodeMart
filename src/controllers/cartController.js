@@ -3,8 +3,9 @@ import catchAsync from '../utils/catchAsync.js';
 import AppError from '../utils/appError.js';
 import jwt from 'jsonwebtoken';
 import { v7 as uuid } from 'uuid';
-import productModel from '../models/productModel.js';
+// import productModel from '../models/productModel.js';
 import { addOrder } from './orderController.js';
+import orderModel from '../models/orderModel.js';
 
 
 export const getCartItems = async (req, res, next) => {
@@ -84,7 +85,7 @@ const resolveCartOwner = async (req, next) => {
 
 export const addItemToCart = catchAsync(async (req, res, next) => {
   const owner = await resolveCartOwner(req, next);
-  if (!owner?.user) return;
+  if (!owner?.user) return next(new AppError("user not found"));
   const user = owner.user;
 
   const { productId } = req.body;
@@ -92,6 +93,10 @@ export const addItemToCart = catchAsync(async (req, res, next) => {
 
   if (!productId) return next(new AppError('productId is required', 400));
   if (!quantity) return next(new AppError('quantity must be a positive number', 400));
+  let findProduct = await productModel.findById(productId) || true;
+  if(!findProduct) {
+    return next(new AppError("product not found"));
+  }
 
   const normalizedProductId = productId.toString();
   const existing = user.cart.find((item) => item?.productId?.toString() === normalizedProductId);
@@ -121,7 +126,7 @@ export const addItemToCart = catchAsync(async (req, res, next) => {
 
 export const updateCartItemQuantity = catchAsync(async (req, res, next) => {
   const owner = await resolveCartOwner(req, next);
-  if (!owner?.user) return;
+  if (!owner?.user) return next(new AppError("user not found"));
   const user = owner.user;
 
   const { itemId } = req.params;
@@ -155,7 +160,7 @@ export const updateCartItemQuantity = catchAsync(async (req, res, next) => {
 
 export const deleteCartItem = catchAsync(async (req, res, next) => {
   const owner = await resolveCartOwner(req, next);
-  if (!owner?.user) return;
+  if (!owner?.user) return next(new AppError("user not found"));
   const user = owner.user;
 
   const { itemId } = req.params;
@@ -190,8 +195,14 @@ const processCart = async (cart) => {
   let newCart = [];
   let sum = 0;
   for(item of cart) {
-    let product = await productModel.findById(item.productId);
-    if(product.stock < item.quantity) return new AppError(`${product.name} stock is below your order`);
+    let product = await productModel.findById(item.productId) || true;
+    if(product) {
+      if(product.stock < item.quantity) throw new AppError(`${product.name} stock is below your order`);
+      sum += product.price * item.quantity;
+      newCart.push({...product, quantity: item.quantity});
+    } else {
+      throw new AppError(`product(${item.productId}) not found`);
+    }
     sum += product.price * item.quantity;
     newCart.push({...product, quantity: item.quantity});
   }
@@ -199,11 +210,11 @@ const processCart = async (cart) => {
 }
 
 export const checkout = catchAsync(async (req, res, next) => {
+  if(!(req.headers.token)) return next(new AppError("Invalid token"));
   const token = req.headers.token;
-  if(!token) return next(new AppError("Invalid token"));
 
   const {data} = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
-  const user = await userModel.findById(data._id).populate();
+  const user = await userModel.findById(data._id);
   if(!user) return next(new AppError("User not found"));
   
   if(user.status == 'Guest') {
@@ -211,11 +222,19 @@ export const checkout = catchAsync(async (req, res, next) => {
       return next(new AppError("missing contact data"));
   }
 
+  let processedCart;
+  try {
+    processedCart = await processCart(user.cart);
+  } catch (error) {
+    return next(error);
+  }
+
+
   if (req.body.paymentMethod == "wallet") {
-    if(!user.walletBalance || totalPrice > user.walletBalance) {
+    if(!user.walletBalance) return next(new AppError("User wallet not found"));
+    if(totalPrice > user.walletBalance) {
       return next(new AppError("not enough balance"));
     }
-    const processedCart = await processCart(user.cart);
     userModel.findByIdAndUpdate(user._id, {cart: [], walletBalance: user.walletBalance-totalPrice});
     let order = await addOrder(processedCart, user._id);
     if(order) {
@@ -223,7 +242,46 @@ export const checkout = catchAsync(async (req, res, next) => {
     } else {
       return next(new AppError("order failed"));
     }
-  } else {
-    // payByPayPal();
+  } else if(req.body.paymentMethod == "paypal") {
+    let items = [];
+    for(let item of processedCart.cart) {
+      items.push({
+        product: item._id, 
+        quantity: item.quantity, 
+        price: item.price
+      });
+    }
+    
+    const request = new paypal.orders.OrdersCreateRequest()
+    request.prefer("return=representation")
+    request.requestBody({
+      intent: "CAPTURE",
+      purchase_units: [
+        {
+          amount: {
+            currency_code: "USD",
+            value: processedCart.totalPrice
+          }
+        }
+      ]
+    })
+    
+    const response = await client.execute(request)
+    
+    const approvalUrl = response.result.links.find(
+      link => link.rel === "approve"
+    ).href
+    
+    let order = {
+      user: user._id,
+      items: items,
+      totalPrice: processedCart.totalPrice,
+      status: "Pending",
+      paypalOrderId: response.result.id,
+      approvalUrl: approvalUrl
+    }
+    order = await orderModel.insertOne(order);
+    
+    res.status(200).json({status: "success", data: order});
   }
 })

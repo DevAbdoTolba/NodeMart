@@ -45,7 +45,8 @@ export const addOrder = async (details, user) => {
         user: user,
         items: items,
         totalPrice: details.totalPrice,
-        status: "Pending"
+        status: "Pending",
+        paymentStatus: "Completed"
     })
     if(InsertOrder) {
         return InsertOrder;
