@@ -297,7 +297,7 @@ export const checkout = catchAsync(async (req, res, next) => {
       paypalOrderId: response.result.id,
       approvalUrl: approvalUrl
     }
-    order = await orderModel.insertOne(order);
+    order = await orderModel.create(order);
     
     res.status(200).json({status: "success", data: order});
   }
