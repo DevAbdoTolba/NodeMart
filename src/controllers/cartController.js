@@ -240,7 +240,7 @@ export const checkout = catchAsync(async (req, res, next) => {
 
 
   if (req.body.paymentMethod == "wallet") {
-    if(!user.walletBalance) return next(new AppError("User wallet not found"));
+    if (user.walletBalance == null) return next(new AppError("User wallet not found"));
     if(totalPrice > user.walletBalance) {
       return next(new AppError("not enough balance"));
     }
