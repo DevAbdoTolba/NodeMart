@@ -107,7 +107,7 @@ token: faketoken
 {
   "title": "Incomplete"
 }
-HTTP 400
+HTTP 401
 
 # Create review with rating out of range
 POST http://localhost:3000/api/reviews
@@ -119,4 +119,4 @@ token: faketoken
   "ratings": 10,
   "product": "aaaaaaaaaaaaaaaaaaaaaaaa"
 }
-HTTP 400
+HTTP 401

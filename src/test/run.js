@@ -2,11 +2,11 @@ import { readFileSync } from 'fs';
 
 // 1 = customer, 2 = guest, 4 = admin
 const mask = parseInt(process.argv[2]) || 0;
-const fail = process.argv.includes('--fail');
+const fail = process.argv.includes('==fail');
 const type = fail ? 'fail' : 'pass';
 
 if (!mask) {
-    console.log('Usage: npm run test -- <1|2|3|4|6|7> [--fail]');
+    console.log('Usage: npm run test -- <1|2|3|4|6|7> [==fail]');
     process.exit(0);
 }
 

@@ -1,24 +1,13 @@
 # Admin Flow - Pass
 # Register admin -> Login -> Categories -> Products -> Orders/Stats -> Block User
 
-# Register Admin
-POST http://localhost:3000/api/auth/register
-Content-Type: application/json
-{
-  "name": "Test Admin",
-  "email": "admin{{unix_timestamp}}@test.com",
-  "phone": "01112345678",
-  "password": "Admin@1234",
-  "role": "admin"
-}
-HTTP 201
 
 # Login
 POST http://localhost:3000/api/auth/login
 Content-Type: application/json
 {
-  "email": "admin{{unix_timestamp}}@test.com",
-  "password": "Admin@1234"
+  "email": "nesmaaa@example.com",
+  "password": "my@Password123"
 }
 HTTP 200
 [Captures]
