@@ -7,6 +7,10 @@ export async function createReview(req, res, next) {
     const { product, ratings, review, title } = req.body;
     const user = req.user._id;
 
+    const existingProduct = await Product.findById(product);
+    if (!existingProduct) {
+      return next(new AppError("Product not found", 404));
+    }
     const newReview = await Review.create({ title, review, ratings, product, user });
 
     // Update product's average rating
