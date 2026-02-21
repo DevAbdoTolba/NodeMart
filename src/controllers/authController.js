@@ -7,8 +7,6 @@ import * as apiHandler from './handlerFactory.js'
 import sendEmail from '../utils/email.js'
 import AppError from '../utils/appError.js'
 
-dotenv.config({path: '../../.env'});
-
 
 export async function Register(req, res, next) {
     const saltRounds = Number.parseInt(process.env.BCRYPT_SALT_ROUNDS);
