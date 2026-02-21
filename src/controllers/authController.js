@@ -27,7 +27,7 @@ export async function Register(req, res, next) {
 
 export async function Login(req, res, next) {
     const userCredentials = req.body;
-    const findUser = await userModel.findOne({email: req.body.email});
+    const findUser = await userModel.findOne({email: req.body.email}).select('+password');
     if(findUser) {
         const checkPassword = await bcrypt.compare(req.body.password, findUser.password);
         if(!checkPassword) return next(new AppError("Wrong credentials", 401));
