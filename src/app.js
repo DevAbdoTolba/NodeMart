@@ -10,10 +10,10 @@ import setupSwagger from './swagger.js'
 // Import Routes 
 import userRoutes from './routes/userRoutes.js'
 import cartRoutes from './routes/cartRoutes.js'
-// import productRoutes from './routes/productRoutes.js'
+import productRoutes from './routes/productRoutes.js'
 // import categoryRoutes from './routes/categoryRoutes.js'
 // import orderRoutes from './routes/orderRoutes.js'
-// import reviewRoutes from './routes/reviewRoutes.js'
+import reviewRoutes from './routes/reviewRoutes.js'
 import adminRoutes from './routes/adminRoutes.js'
 
 const app = express();
@@ -27,10 +27,10 @@ setupSwagger(app);
 // Routes
 app.use(userRoutes);
 app.use(cartRoutes);
-// app.use('/api/products', productRoutes);
+app.use('/api/products', productRoutes);
 // app.use('/api/categories', categoryRoutes);
 // app.use('/api/orders', orderRoutes);
-// app.use('/api/reviews', reviewRoutes);
+app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin',adminRoutes);
 
 // 404 Handler
