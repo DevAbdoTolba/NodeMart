@@ -1,5 +1,6 @@
 import express from "express";
 import * as productController from "../controllers/productController.js";
+import { validateCreateProduct, validateUpdateProduct, validateId } from "../middlewares/validationMiddleware.js";
 
 const router = express.Router();
 
@@ -50,7 +51,7 @@ router.get("/", productController.getAllProducts);
  *       201:
  *         description: Product created successfully
  */
-router.post("/", productController.createProduct);
+router.post("/", validateCreateProduct, productController.createProduct);
 
 /**
  * @swagger
@@ -68,7 +69,7 @@ router.post("/", productController.createProduct);
  *       200:
  *         description: Product data
  */
-router.get("/:id", productController.getProduct);
+router.get("/:id", validateId(), productController.getProduct);
 
 /**
  * @swagger
@@ -104,7 +105,7 @@ router.get("/:id", productController.getProduct);
  *       200:
  *         description: Product updated successfully
  */
-router.patch("/:id", productController.updateProduct);
+router.patch("/:id", validateId(), validateUpdateProduct, productController.updateProduct);
 
 /**
  * @swagger
@@ -122,6 +123,6 @@ router.patch("/:id", productController.updateProduct);
  *       204:
  *         description: Product deleted successfully
  */
-router.delete("/:id", productController.deleteProduct);
+router.delete("/:id", validateId(), productController.deleteProduct);
 
 export default router;
