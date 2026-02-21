@@ -90,6 +90,11 @@ router.patch("/:id", categoryController.updateCategory);
  *         required: true
  *         schema:
  *           type: string
+ *     responses:
+ *       204:
+ *         description: Category deleted successfully
+ *       404:
+ *         description: Category not found
  */
 router.delete("/:id", categoryController.deleteCategory);
 
