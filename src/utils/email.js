@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken'
 import emailTemplate from './emailTemplate.js'
 import dotenv from 'dotenv'
 
-dotenv.config({path: '../../.env'});
 
 const transporter = nodeMailer.createTransport({
     service: 'gmail',
