@@ -1,4 +1,5 @@
 import express from 'express'
+import morgan from 'morgan'
 
 // import error handlers
 import globalErrorHandler from './controllers/errorController.js'
@@ -20,6 +21,7 @@ const app = express();
 
 // Global Middlewares
 app.use(express.json());
+app.use(morgan('dev'));
 
 // Swagger Docs
 setupSwagger(app);
