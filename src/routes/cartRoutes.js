@@ -8,6 +8,7 @@ import {
 } from '../controllers/cartController.js';
 import {approvePayment} from '../utils/paymentSetup.js';
 import { validateAddToCart, validateUpdateCart, validateCheckout, validateId } from '../middlewares/validationMiddleware.js';
+import { protect } from '../middlewares/authMiddleware.js';
 
 const cartRouter = express.Router();
 
@@ -36,7 +37,7 @@ const cartRouter = express.Router();
  *       401:
  *         description: Token missing or invalid
  */
-cartRouter.get('/api/cart', getCartItems)
+cartRouter.get('/api/cart', protect, getCartItems)
 
 /**
  * @swagger
@@ -98,7 +99,7 @@ cartRouter.post('/api/cart', validateAddToCart, addItemToCart);
  *       401:
  *         description: Not authenticated
  */
-cartRouter.post('/api/checkout', validateCheckout, checkout);
+cartRouter.post('/api/checkout', protect, validateCheckout, checkout);
 
 /**
  * @swagger

@@ -10,18 +10,7 @@ import { addOrder } from './orderController.js';
 import orderModel from '../models/orderModel.js';
 
 export const getCartItems = catchAsync(async (req, res, next) => {
-  const token = req.headers.token;
-  if(!token) return next(new AppError("Token is required", 401));
-
-  let decoded;
-  try {
-    decoded = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
-  } catch (err) {
-    return next(new AppError("Invalid token", 401));
-  }
-
-  const user = await userModel.findById(decoded.data._id);
-  if(!user) return next(new AppError("User not found", 404));
+  const user = req.user;
 
   res.status(200).json({
     status: 'success',
@@ -216,12 +205,7 @@ const processCart = async (cart) => {
 }
 
 export const checkout = catchAsync(async (req, res, next) => {
-  if(!(req.headers.token)) return next(new AppError("Invalid token"));
-  const token = req.headers.token;
-
-  const {data} = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
-  const user = await userModel.findById(data._id);
-  if(!user) return next(new AppError("User not found"));
+  const user = req.user;
   
   if(user.status == 'Guest') {
     if(!req.body?.email || !req.body?.phone || !req.body?.address) 
