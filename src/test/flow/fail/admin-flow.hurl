@@ -15,7 +15,7 @@ token: badtoken
 HTTP 401
 
 # Register a regular user to test 403
-POST http://localhost:3000/api/auth/register
+POST http://localhost:3000/api/users/register
 Content-Type: application/json
 {
   "name": "Regular User",
@@ -25,7 +25,7 @@ Content-Type: application/json
 }
 HTTP 201
 
-POST http://localhost:3000/api/auth/login
+POST http://localhost:3000/api/users/login
 Content-Type: application/json
 {
   "email": "regular{{unix_timestamp}}@test.com",
@@ -55,7 +55,7 @@ token: {{regular_token}}
 HTTP 403
 
 # Block user as regular user -> 403
-PATCH http://localhost:3000/api/user/aaaaaaaaaaaaaaaaaaaaaaaa/status
+PATCH http://localhost:3000/api/users/aaaaaaaaaaaaaaaaaaaaaaaa/status
 Content-Type: application/json
 token: {{regular_token}}
 {
@@ -64,7 +64,7 @@ token: {{regular_token}}
 HTTP 403
 
 # --- Now login as actual admin to test validation (400s) ---
-POST http://localhost:3000/api/auth/login
+POST http://localhost:3000/api/users/login
 Content-Type: application/json
 {
   "email": "nesmaaa@example.com",
@@ -93,7 +93,7 @@ token: {{admin_token}}
 HTTP 400
 
 # Block user with invalid ID -> 400
-PATCH http://localhost:3000/api/user/not-valid-id/status
+PATCH http://localhost:3000/api/users/not-valid-id/status
 Content-Type: application/json
 token: {{admin_token}}
 {
@@ -102,7 +102,7 @@ token: {{admin_token}}
 HTTP 400
 
 # Block user missing isBlocked -> 400
-PATCH http://localhost:3000/api/user/aaaaaaaaaaaaaaaaaaaaaaaa/status
+PATCH http://localhost:3000/api/users/aaaaaaaaaaaaaaaaaaaaaaaa/status
 Content-Type: application/json
 token: {{admin_token}}
 {

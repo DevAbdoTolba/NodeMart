@@ -99,7 +99,7 @@ cartRouter.post('/', validateAddToCart, addItemToCart);
  *       401:
  *         description: Not authenticated
  */
-cartRouter.post('/api/checkout', validateCheckout, checkout);
+cartRouter.post('/checkout', validateCheckout, checkout);
 
 /**
  * @swagger
@@ -134,7 +134,7 @@ cartRouter.post('/api/checkout', validateCheckout, checkout);
  *       404:
  *         description: Cart item not found
  */
-cartRouter.patch('//:itemId', validateId('itemId'), validateUpdateCart, updateCartItemQuantity);
+cartRouter.patch('/:itemId', validateId('itemId'), validateUpdateCart, updateCartItemQuantity);
 
 /**
  * @swagger
@@ -159,7 +159,7 @@ cartRouter.patch('//:itemId', validateId('itemId'), validateUpdateCart, updateCa
  *       404:
  *         description: Cart item not found
  */
-cartRouter.delete('//:itemId', validateId('itemId'), deleteCartItem);
+cartRouter.delete('/:itemId', validateId('itemId'), deleteCartItem);
 
 /**
  * @swagger
@@ -176,6 +176,6 @@ cartRouter.delete('//:itemId', validateId('itemId'), deleteCartItem);
  *       200:
  *         description: Payment approved
  */
-cartRouter.post("/api/payments/paypal/webhook", approvePayment);
+cartRouter.post("/payments/paypal/webhook", approvePayment);
 
 export default cartRouter;

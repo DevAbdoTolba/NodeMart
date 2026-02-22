@@ -2,7 +2,7 @@
 # Register -> Login -> Browse Products -> Cart -> Review
 
 # Register
-POST http://localhost:3000/api/auth/register
+POST http://localhost:3000/api/users/register
 Content-Type: application/json
 {
   "name": "Test Customer",
@@ -13,9 +13,9 @@ Content-Type: application/json
 HTTP 201
 
 # Login
-POST http://localhost:3000/api/auth/login
+POST http://localhost:3000/api/users/login
 Content-Type: application/json
-{
+{ 
   "email": "customer{{unix_timestamp}}@test.com",
   "password": "Test@1234"
 }
@@ -24,12 +24,12 @@ HTTP 200
 token: jsonpath "$.token"
 
 # Get Profile
-GET http://localhost:3000/api/user/me
+GET http://localhost:3000/api/users/me
 token: {{token}}
 HTTP 200
 
 # Update Profile
-PATCH http://localhost:3000/api/user/me
+PATCH http://localhost:3000/api/users/me
 Content-Type: application/json
 token: {{token}}
 {

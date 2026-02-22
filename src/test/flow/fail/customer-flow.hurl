@@ -2,7 +2,7 @@
 # Bad registration, bad login, missing auth, invalid inputs
 
 # Register with missing name
-POST http://localhost:3000/api/auth/register
+POST http://localhost:3000/api/users/register
 Content-Type: application/json
 {
   "email": "bad@test.com",
@@ -12,7 +12,7 @@ Content-Type: application/json
 HTTP 400
 
 # Register with weak password
-POST http://localhost:3000/api/auth/register
+POST http://localhost:3000/api/users/register
 Content-Type: application/json
 {
   "name": "Bad User",
@@ -23,7 +23,7 @@ Content-Type: application/json
 HTTP 400
 
 # Register with invalid phone
-POST http://localhost:3000/api/auth/register
+POST http://localhost:3000/api/users/register
 Content-Type: application/json
 {
   "name": "Bad Phone",
@@ -34,7 +34,7 @@ Content-Type: application/json
 HTTP 400
 
 # Login with missing email
-POST http://localhost:3000/api/auth/login
+POST http://localhost:3000/api/users/login
 Content-Type: application/json
 {
   "password": "Test@1234"
@@ -42,7 +42,7 @@ Content-Type: application/json
 HTTP 400
 
 # Login with missing password
-POST http://localhost:3000/api/auth/login
+POST http://localhost:3000/api/users/login
 Content-Type: application/json
 {
   "email": "test@test.com"
@@ -50,7 +50,7 @@ Content-Type: application/json
 HTTP 400
 
 # Login with wrong credentials
-POST http://localhost:3000/api/auth/login
+POST http://localhost:3000/api/users/login
 Content-Type: application/json
 {
   "email": "doesnotexist@test.com",
@@ -59,7 +59,7 @@ Content-Type: application/json
 HTTP 401
 
 # Get profile without token
-GET http://localhost:3000/api/user/me
+GET http://localhost:3000/api/users/me
 HTTP 401
 
 # Get product with invalid ID
