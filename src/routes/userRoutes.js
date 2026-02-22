@@ -89,7 +89,7 @@
  
  /**
   * @swagger
-  * /api/users/{token}:
+  * /api/users/confirmEmail/{token}:
   *   get:
   *     summary: Confirm user email by token
   *     tags: [auth]
@@ -107,7 +107,7 @@
   *       404:
   *         description: User not found
   */
- userRouter.get("/:token", mapTokenParamToEmail, confirmEmail);
+ userRouter.get("/confirmEmail/:token", mapTokenParamToEmail, confirmEmail);
  
  // ======= User Profile Routes (require login) =======
 
