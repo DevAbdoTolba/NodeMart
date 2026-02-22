@@ -9,6 +9,7 @@ import AppError from '../utils/appError.js'
 
 
 export const Register = catchAsync(async (req, res, next) => {
+    
     const saltRounds = Number.parseInt(process.env.BCRYPT_SALT_ROUNDS);
     req.body.password = await bcrypt.hash(req.body.password, saltRounds);
     const registerUser = apiHandler.createOne(userModel);
@@ -17,7 +18,7 @@ export const Register = catchAsync(async (req, res, next) => {
     res.json = body => {
         const createdUser = body?.data?.data;
         if (createdUser) {
-            // console.log(createdUser);
+            console.log(createdUser);
             sendEmail(createdUser.email, createdUser.name);
             createdUser.password = undefined;
         }

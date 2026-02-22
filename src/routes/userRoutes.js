@@ -17,7 +17,7 @@
  
  /**
   * @swagger
-  * /api/auth/register:
+  * /api/users/register:
   *   post:
   *     summary: Register a new user account
   *     tags: [auth]
@@ -38,23 +38,17 @@
   *                 type: string
   *               password:
   *                 type: string
-  *               role:
-  *                 type: string
-  *                 enum: [customer, admin]
-  *               status:
-  *                 type: string
-  *                 enum: [Unverified, Approved, Restricted, Deleted, Guest]
   *     responses:
   *       201:
   *         description: User registered successfully
   *       400:
   *         description: Validation error
   */
- userRouter.post("/api/auth/register", validateEmail, validateData, Register);
+ userRouter.post("/register", validateEmail, validateData, Register);
  
  /**
   * @swagger
-  * /api/auth/login:
+  * /api/users/login:
   *   post:
   *     summary: Login user and return JWT token
   *     tags: [auth]
@@ -79,11 +73,11 @@
   *       401:
   *         description: Wrong credentials
   */
- userRouter.post("/api/auth/login", validateLogin, Login);
+ userRouter.post("/login", validateLogin, Login);
  
  /**
   * @swagger
-  * /api/auth/guest:
+  * /api/users/guest:
   *   post:
   *     summary: Create guest account (status Guest)
   *     tags: [auth]
@@ -91,11 +85,11 @@
   *       201:
   *         description: Guest user created
   */
- userRouter.post("/api/auth/guest", addGuest);
+ userRouter.post("/guest", addGuest);
  
  /**
   * @swagger
-  * /api/auth/{token}:
+  * /api/users/{token}:
   *   get:
   *     summary: Confirm user email by token
   *     tags: [auth]
@@ -113,13 +107,13 @@
   *       404:
   *         description: User not found
   */
- userRouter.get("/api/auth/:token", mapTokenParamToEmail, confirmEmail);
+ userRouter.get("/:token", mapTokenParamToEmail, confirmEmail);
  
  // ======= User Profile Routes (require login) =======
 
  /**
   * @swagger
-  * /api/user/me:
+  * /api/users/me:
   *   get:
   *     summary: Get current logged-in user profile
   *     tags: [User]
@@ -131,11 +125,11 @@
   *       401:
   *         description: Not logged in
   */
- userRouter.get("/api/user/me", protect, getMe);
+ userRouter.get("/me", protect, getMe);
  
  /**
   * @swagger
-  * /api/user/me:
+  * /api/users/me:
   *   patch:
   *     summary: Update current user (name, email, phone)
   *     tags: [User]
@@ -157,11 +151,11 @@
   *       200:
   *         description: User updated
   */
- userRouter.patch("/api/user/me", protect, validateUpdateMe, updateMe);
+ userRouter.patch("/me", protect, validateUpdateMe, updateMe);
  
  /**
   * @swagger
-  * /api/user/me:
+  * /api/users/me:
   *   delete:
   *     summary: Delete current user account
   *     tags: [User]
@@ -171,11 +165,11 @@
   *       204:
   *         description: User deleted
   */
- userRouter.delete("/api/user/me", protect, deleteMe);
+ userRouter.delete("/me", protect, deleteMe);
  
  /**
   * @swagger
-  * /api/user/{id}/status:
+  * /api/users/{id}/status:
   *   patch:
   *     summary: Block/Unblock a user (Admin only)
   *     tags: [Admin]
@@ -202,6 +196,6 @@
   *       404:
   *         description: User not found
   */
- userRouter.patch("/api/user/:id/status", protect, restrictTo("admin"), validateId('id'), validateUpdateUserStatus, updateUserStatus);
+ userRouter.patch("/:id/status", protect, restrictTo("admin"), validateId('id'), validateUpdateUserStatus, updateUserStatus);
  
  export default userRouter;

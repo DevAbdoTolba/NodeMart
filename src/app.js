@@ -21,14 +21,15 @@ const app = express();
 
 // Global Middlewares
 app.use(express.json());
+
 app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'combined'));
 
 // Swagger Docs
 setupSwagger(app);
 
 // Routes
-app.use(userRoutes);
-app.use(cartRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/cart', cartRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
