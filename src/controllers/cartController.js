@@ -197,11 +197,11 @@ const processCart = async (cart) => {
   let newCart = [];
   let sum = 0;
   for(let item of cart) {
-    let product = await productModel.findById(item.productId) || true;
+    let product = await productModel.findById(item.productId);
     if(product) {
       if(product.stock < item.quantity) throw new AppError(`${product.name} stock is below your order`);
       sum += product.price * item.quantity;
-      newCart.push({...product, quantity: item.quantity});
+      newCart.push({...product.toObject(), quantity: item.quantity});
     } else {
       throw new AppError(`product(${item.productId}) not found`);
     }
@@ -261,7 +261,7 @@ export const checkout = catchAsync(async (req, res, next) => {
         {
           amount: {
             currency_code: "USD",
-            value: processedCart.totalPrice
+            value: processedCart.totalPrice.toFixed(2)
           }
         }
       ]
@@ -278,12 +278,11 @@ export const checkout = catchAsync(async (req, res, next) => {
       items: items,
       totalPrice: processedCart.totalPrice,
       status: "Pending",
-      paypalOrderId: response.result.id,
-      approvalUrl: approvalUrl
+      paypalOrderId: response.result.id
     }
     order = await orderModel.create(order);
     
-    res.status(200).json({status: "success", data: order});
+    res.status(200).json({status: "success", data: order, approvalUrl: approvalUrl});
   } else {
     return res.status(400).json({
       status: "fail",
