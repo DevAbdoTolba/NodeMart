@@ -20,12 +20,8 @@ router.use(restrictTo("admin"));
  *   get:
  *     summary: Get admin stats (total revenue and total orders)
  *     tags: [Admin]
- *     parameters:
- *       - in: header
- *         name: token
- *         required: true
- *         schema:
- *           type: string
+ *     security:
+ *       - tokenAuth: []
  *     responses:
  *       200:
  *         description: Admin statistics
