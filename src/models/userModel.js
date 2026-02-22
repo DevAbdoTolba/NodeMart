@@ -45,10 +45,11 @@ const userSchema = new mongoose.Schema({
             quantity: { type: Number }
         }
     ],
-    wishlist: {
-        type: Array,
-        default: []
-    },
+    wishlist: [
+        {
+            productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' }
+        }
+    ],
     walletBalance: {
         type: Number,
         default: 0
