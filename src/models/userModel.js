@@ -21,7 +21,9 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: function() { return this.status != "Guest" }
+        required: function() { return this.status != "Guest" },
+        minlength: 6,
+        select: false
     },
     role: {
         type: String,
