@@ -15,6 +15,7 @@ const sendError = (err, res) => {
     if(process.env.NODE_ENV === 'development') {
         res.status(err.statusCode).json({
             status: err.status,
+            type: err.type,
             error: err,
             message: err.message,
             stack: err.stack

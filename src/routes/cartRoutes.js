@@ -37,7 +37,7 @@ const cartRouter = express.Router();
  *       401:
  *         description: Token missing or invalid
  */
-cartRouter.get('/api/cart', protect, getCartItems)
+cartRouter.get('/', protect, getCartItems)
 
 /**
  * @swagger
@@ -69,7 +69,7 @@ cartRouter.get('/api/cart', protect, getCartItems)
  *       400:
  *         description: Missing productId or invalid quantity
  */
-cartRouter.post('/api/cart', validateAddToCart, addItemToCart);
+cartRouter.post('/', validateAddToCart, addItemToCart);
 
 /**
  * @swagger
@@ -134,7 +134,7 @@ cartRouter.post('/api/checkout', validateCheckout, checkout);
  *       404:
  *         description: Cart item not found
  */
-cartRouter.patch('/api/cart/:itemId', validateId('itemId'), validateUpdateCart, updateCartItemQuantity);
+cartRouter.patch('//:itemId', validateId('itemId'), validateUpdateCart, updateCartItemQuantity);
 
 /**
  * @swagger
@@ -159,7 +159,7 @@ cartRouter.patch('/api/cart/:itemId', validateId('itemId'), validateUpdateCart, 
  *       404:
  *         description: Cart item not found
  */
-cartRouter.delete('/api/cart/:itemId', validateId('itemId'), deleteCartItem);
+cartRouter.delete('//:itemId', validateId('itemId'), deleteCartItem);
 
 /**
  * @swagger
