@@ -35,6 +35,28 @@ router.use(protect);
  */
 router.get("/", getMyOrders);
 
+// ---------- Admin only routes ----------
+
+/**
+ * @swagger
+ * /api/orders/admin/all:
+ *   get:
+ *     summary: Get all orders (Admin only)
+ *     tags: [Orders]
+ *     parameters:
+ *       - in: header
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: All orders
+ *       403:
+ *         description: Not authorized
+ */
+router.get("/admin/all", restrictTo("admin"), getAllOrders);
+
 /**
  * @swagger
  * /api/orders/{id}:
@@ -61,28 +83,6 @@ router.get("/", getMyOrders);
  *         description: Order not found
  */
 router.get("/:id", validateId(), getOrder);
-
-// ---------- Admin only routes ----------
-
-/**
- * @swagger
- * /api/orders/admin/all:
- *   get:
- *     summary: Get all orders (Admin only)
- *     tags: [Orders]
- *     parameters:
- *       - in: header
- *         name: token
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: All orders
- *       403:
- *         description: Not authorized
- */
-router.get("/admin/all", restrictTo("admin"), getAllOrders);
 
 /**
  * @swagger
