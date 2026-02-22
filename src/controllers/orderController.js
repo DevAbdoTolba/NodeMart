@@ -50,5 +50,5 @@ export const addOrder = async (details, user) => {
         status: "Pending",
         paymentStatus: "Completed"
     });
-    return order || false;
+    return order;
 };
