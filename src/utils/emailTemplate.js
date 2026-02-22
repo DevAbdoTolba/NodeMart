@@ -112,7 +112,7 @@ export default function emailTemplate(email, name) {
           </div>
           <h2>Hello, ${name}</h2>
           <p class="mt-4">Please click the button below to verify your account!</p>
-          <a href="http://localhost:3000/api/auth/${email}" class="btn-verify">Verify Now</a>
+          <a href="http://localhost:3000/api/users/confirmEmail/${email}" class="btn-verify">Verify Now</a>
         </div>
         <div class="footer-text">
           <p>If you did not initiate this registration or request this email verification, please <a href="">contact us</a> immediately.</p>
