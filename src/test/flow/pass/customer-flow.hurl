@@ -1,5 +1,5 @@
 # Customer Flow - Pass
-# Register -> Login -> Browse Products -> Cart -> Review
+# Register -> Login -> Profile -> Products -> Cart (Unverified gets 403) -> Review
 
 # Register
 POST http://localhost:3000/api/users/register
@@ -67,24 +67,19 @@ token: {{token}}
 }
 HTTP 200
 
-# Get Cart
+# Get Cart (Unverified user -> 403)
 GET http://localhost:3000/api/cart
 token: {{token}}
-HTTP 200
+HTTP 403
 
-# Update Cart Item
-PATCH http://localhost:3000/api/cart/{{product_id}}
+# Checkout (Unverified user -> 403)
+POST http://localhost:3000/api/cart/checkout
 Content-Type: application/json
 token: {{token}}
 {
-  "quantity": 5
+  "paymentMethod": "wallet"
 }
-HTTP 200
-
-# Delete Cart Item
-DELETE http://localhost:3000/api/cart/{{product_id}}
-token: {{token}}
-HTTP 200
+HTTP 403
 
 # Create Review
 POST http://localhost:3000/api/reviews

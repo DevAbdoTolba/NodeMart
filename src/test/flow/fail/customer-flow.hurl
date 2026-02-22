@@ -1,5 +1,5 @@
 # Customer Flow - Fail
-# Bad registration, bad login, missing auth, invalid inputs
+# Bad registration, bad login, missing auth, invalid inputs, accountGuard blocks
 
 # Register with missing name
 POST http://localhost:3000/api/users/register
@@ -120,3 +120,18 @@ token: faketoken
   "product": "aaaaaaaaaaaaaaaaaaaaaaaa"
 }
 HTTP 401
+
+# Confirm PayPal with missing paypalOrderId
+POST http://localhost:3000/api/cart/payments/paypal/confirm
+Content-Type: application/json
+{
+}
+HTTP 400
+
+# Confirm PayPal with fake order ID
+POST http://localhost:3000/api/cart/payments/paypal/confirm
+Content-Type: application/json
+{
+  "paypalOrderId": "FAKE_ORDER_123"
+}
+HTTP 500

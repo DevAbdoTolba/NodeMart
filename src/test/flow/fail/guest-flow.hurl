@@ -1,5 +1,5 @@
 # Guest Flow - Fail
-# Missing tokens, bad cart inputs, invalid IDs
+# Missing tokens, bad cart inputs, invalid IDs, accountGuard blocks
 
 # Get cart without token
 GET http://localhost:3000/api/cart
@@ -65,3 +65,20 @@ HTTP 400
 DELETE http://localhost:3000/api/cart/not-valid-id
 token: faketoken
 HTTP 400
+
+# Checkout without token -> 401
+POST http://localhost:3000/api/cart/checkout
+Content-Type: application/json
+{
+  "paymentMethod": "wallet"
+}
+HTTP 401
+
+# Checkout with bad token -> 401
+POST http://localhost:3000/api/cart/checkout
+Content-Type: application/json
+token: broken_token
+{
+  "paymentMethod": "wallet"
+}
+HTTP 401
