@@ -6,7 +6,7 @@ import {
   getCartItems,
   checkout
 } from '../controllers/cartController.js';
-import {approvePayment} from '../utils/paymentSetup.js';
+import {approvePayment, confirmPayment} from '../utils/paymentSetup.js';
 import { validateAddToCart, validateUpdateCart, validateId } from '../middlewares/validationMiddleware.js';
 import { protect } from '../middlewares/authMiddleware.js';
 import { accountGuard } from '../middlewares/accountGuard.js';
@@ -171,5 +171,31 @@ cartRouter.delete('/:itemId', validateId('itemId'), deleteCartItem);
  *         description: Payment approved
  */
 cartRouter.post("/payments/paypal/webhook", approvePayment);
+
+/**
+ * @swagger
+ * /api/cart/payments/paypal/confirm:
+ *   post:
+ *     summary: Confirm PayPal payment after buyer approval
+ *     tags: [Cart]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [paypalOrderId]
+ *             properties:
+ *               paypalOrderId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Payment confirmed, stock updated, cart cleared
+ *       400:
+ *         description: Payment not completed
+ *       404:
+ *         description: Order not found
+ */
+cartRouter.post("/payments/paypal/confirm", confirmPayment);
 
 export default cartRouter;

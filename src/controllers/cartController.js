@@ -116,6 +116,7 @@ export const addItemToCart = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       message: 'Item added to cart',
+      token: owner.token,
       isGuestCreated: owner.isGuestCreated,
       data: {
         cart: user.cart
@@ -277,7 +278,6 @@ export const checkout = catchAsync(async (req, res, next) => {
       user: user._id,
       items: items,
       totalPrice: processedCart.totalPrice,
-      status: "Pending",
       paypalOrderId: response.result.id
     }
     order = await orderModel.create(order);
