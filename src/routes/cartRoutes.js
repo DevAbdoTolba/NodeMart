@@ -7,8 +7,9 @@ import {
   checkout
 } from '../controllers/cartController.js';
 import {approvePayment} from '../utils/paymentSetup.js';
-import { validateAddToCart, validateUpdateCart, validateCheckout, validateId } from '../middlewares/validationMiddleware.js';
+import { validateAddToCart, validateUpdateCart, validateId } from '../middlewares/validationMiddleware.js';
 import { protect } from '../middlewares/authMiddleware.js';
+import { accountGuard } from '../middlewares/accountGuard.js';
 
 const cartRouter = express.Router();
 
@@ -33,7 +34,7 @@ const cartRouter = express.Router();
  *       401:
  *         description: Token missing or invalid
  */
-cartRouter.get('/', protect, getCartItems)
+cartRouter.get('/', protect, accountGuard('viewCart'), getCartItems)
 
 /**
  * @swagger
@@ -78,17 +79,22 @@ cartRouter.post('/', validateAddToCart, addItemToCart);
  *           schema:
  *             type: object
  *             properties:
+ *               paymentMethod:
+ *                 type: string
+ *                 enum: ["paypal", "wallet"]
  *               address:
  *                 type: string
+ *                 default: "samalot elbalad"
  *               phone:
  *                 type: string
+ *                 default: "01000000000"
  *     responses:
  *       200:
  *         description: Order created successfully
  *       401:
  *         description: Not authenticated
  */
-cartRouter.post('/checkout', validateCheckout, checkout);
+cartRouter.post('/checkout', protect, accountGuard('checkout'), checkout);
 
 /**
  * @swagger
@@ -98,6 +104,12 @@ cartRouter.post('/checkout', validateCheckout, checkout);
  *     tags: [Cart]
  *     security:
  *       - tokenAuth: []
+ *       - in: path
+ *         name: itemId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     parameters:
  *       - in: path
  *         name: itemId
  *         required: true
