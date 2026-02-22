@@ -178,7 +178,7 @@
   * /api/user/{id}/status:
   *   patch:
   *     summary: Block/Unblock a user (Admin only)
-  *     tags: [User]
+  *     tags: [Admin]
   *     security:
   *       - tokenAuth: []
   *     parameters:
