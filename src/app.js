@@ -21,7 +21,7 @@ const app = express();
 
 // Global Middlewares
 app.use(express.json());
-app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+app.use(morgan(process.env.NODE_ENV === 'development' ? 'dev' : 'combined'));
 
 // Swagger Docs
 setupSwagger(app);
