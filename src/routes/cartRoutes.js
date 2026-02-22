@@ -25,12 +25,8 @@ const cartRouter = express.Router();
  *   get:
  *     summary: Get cart items for the logged-in user
  *     tags: [Cart]
- *     parameters:
- *       - in: header
- *         name: token
- *         required: true
- *         schema:
- *           type: string
+ *     security:
+ *       - tokenAuth: []
  *     responses:
  *       200:
  *         description: Cart items retrieved
@@ -45,12 +41,9 @@ cartRouter.get('/', protect, getCartItems)
  *   post:
  *     summary: Add item to cart
  *     tags: [Cart]
- *     parameters:
- *       - in: header
- *         name: token
- *         schema:
- *           type: string
- *         description: JWT token (optional - creates guest if missing)
+ *     security:
+ *       - tokenAuth: []
+ *       - {}
  *     requestBody:
  *       required: true
  *       content:
@@ -73,16 +66,12 @@ cartRouter.post('/', validateAddToCart, addItemToCart);
 
 /**
  * @swagger
- * /api/checkout:
+ * /api/cart/checkout:
  *   post:
  *     summary: Checkout the cart and create an order
  *     tags: [Cart]
- *     parameters:
- *       - in: header
- *         name: token
- *         required: true
- *         schema:
- *           type: string
+ *     security:
+ *       - tokenAuth: []
  *     requestBody:
  *       content:
  *         application/json:
@@ -107,12 +96,8 @@ cartRouter.post('/checkout', validateCheckout, checkout);
  *   patch:
  *     summary: Update cart item quantity
  *     tags: [Cart]
- *     parameters:
- *       - in: header
- *         name: token
- *         required: true
- *         schema:
- *           type: string
+ *     security:
+ *       - tokenAuth: []
  *       - in: path
  *         name: itemId
  *         required: true
@@ -142,12 +127,9 @@ cartRouter.patch('/:itemId', validateId('itemId'), validateUpdateCart, updateCar
  *   delete:
  *     summary: Remove item from cart
  *     tags: [Cart]
+ *     security:
+ *       - tokenAuth: []
  *     parameters:
- *       - in: header
- *         name: token
- *         required: true
- *         schema:
- *           type: string
  *       - in: path
  *         name: itemId
  *         required: true
@@ -163,7 +145,7 @@ cartRouter.delete('/:itemId', validateId('itemId'), deleteCartItem);
 
 /**
  * @swagger
- * /api/payments/paypal/webhook:
+ * /api/cart/payments/paypal/webhook:
  *   post:
  *     summary: PayPal payment webhook
  *     tags: [Cart]
