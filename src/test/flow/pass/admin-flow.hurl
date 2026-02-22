@@ -3,7 +3,7 @@
 
 
 # Login
-POST http://localhost:3000/api/auth/login
+POST http://localhost:3000/api/users/login
 Content-Type: application/json
 {
   "email": "nesmaaa@example.com",
@@ -67,7 +67,7 @@ token: {{token}}
 HTTP 200
 
 # Register a user to block
-POST http://localhost:3000/api/auth/register
+POST http://localhost:3000/api/users/register
 Content-Type: application/json
 {
   "name": "Block Me",
@@ -80,7 +80,7 @@ HTTP 201
 user_id: jsonpath "$.data.data._id"
 
 # Block User
-PATCH http://localhost:3000/api/user/{{user_id}}/status
+PATCH http://localhost:3000/api/users/{{user_id}}/status
 Content-Type: application/json
 token: {{token}}
 {
@@ -89,7 +89,7 @@ token: {{token}}
 HTTP 200
 
 # Unblock User
-PATCH http://localhost:3000/api/user/{{user_id}}/status
+PATCH http://localhost:3000/api/users/{{user_id}}/status
 Content-Type: application/json
 token: {{token}}
 {
