@@ -18,13 +18,15 @@ export const Register = catchAsync(async (req, res, next) => {
     res.json = body => {
         const createdUser = body?.data?.data;
         if (createdUser) {
-            console.log(createdUser);
             sendEmail(createdUser.email, createdUser.name);
             createdUser.password = undefined;
         }
         return originalJson.call(res, body);
     };
-    return registerUser(req, res, next);
+    return registerUser(req, res, (err) => {
+        res.json = originalJson;
+        next(err);
+    });
 });
 
 export const Login = catchAsync(async (req, res, next) => {
@@ -54,8 +56,14 @@ export const confirmEmail = catchAsync(async (req, res, next) => {
     req.params.value = email;
     req.body = { status: "Approved"};
     let originalJson = res.json;
-    res.json = body => originalJson.call(res, "email verified successfully");
-    return updateUser(req, res, next);
+    res.json = body => originalJson.call(res, {status: 'Approved', message: 'email verified successfully'});
+    return updateUser(req, res, (err) => {
+        res.json = originalJson;
+        if (err && err.statusCode === 404) {
+            return next(new AppError("User not found", 404));
+        }
+        next(err);
+    });
 });
 
 export const addGuest = catchAsync(async (req, res, next) => {
