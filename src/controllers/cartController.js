@@ -10,6 +10,7 @@ import { addOrder } from './orderController.js';
 import orderModel from '../models/orderModel.js';
 
 export const getCartItems = catchAsync(async (req, res, next) => {
+  await req.user.populate('cart.productId');
   res.status(200).json({
     status: 'success',
     data: {
@@ -88,16 +89,22 @@ export const addItemToCart = catchAsync(async (req, res, next) => {
 
   if (!productId) return next(new AppError('productId is required', 400));
   if (!quantity) return next(new AppError('quantity must be a positive number', 400));
-  let findProduct = await productModel.findById(productId) || true;
+  let findProduct = await productModel.findById(productId);
   if(!findProduct) {
-    return next(new AppError("product not found"));
+    return next(new AppError("product not found", 404));
   }
 
   const normalizedProductId = productId.toString();
   const existing = user.cart.find((item) => item?.productId?.toString() === normalizedProductId);
 
+  const totalQuantity = existing ? toPositiveInt(existing.quantity, 1) + quantity : quantity;
+  if(findProduct.stock < totalQuantity) {
+    const avilableQuantity = existing ? findProduct.stock - existing?.quantity : findProduct.stock;
+    return next(new AppError(`Not enough stock. ${avilableQuantity ? `Only ${avilableQuantity} available for you` : 'out of stock'}`, 400));
+  }
+
   if (existing) {
-    existing.quantity = toPositiveInt(existing.quantity, 1) + quantity;
+    existing.quantity = totalQuantity;
   } else {
     user.cart.push({ productId: normalizedProductId, quantity });
   }
@@ -109,10 +116,8 @@ export const addItemToCart = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       message: 'Item added to cart',
-      token: owner.token,
       isGuestCreated: owner.isGuestCreated,
       data: {
-        userId: user._id,
         cart: user.cart
       }
     }
@@ -135,6 +140,12 @@ export const updateCartItemQuantity = catchAsync(async (req, res, next) => {
 
   if (!item) return next(new AppError('Cart item not found', 404));
 
+  let product = await productModel.findById(targetProductId);
+  if(!product) return next(new AppError("product not found", 404));
+  if(product.stock < quantity) {
+    return next(new AppError(`Not enough stock. Only ${product.stock} available`, 400));
+  }
+
   item.quantity = quantity;
   user.cart = mergeCartDuplicates(user.cart);
   await userModel.findByIdAndUpdate(user._id, {cart: user.cart});
@@ -143,10 +154,8 @@ export const updateCartItemQuantity = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       message: 'Cart item quantity updated',
-      token: owner.token,
       isGuestCreated: owner.isGuestCreated,
       data: {
-        userId: user._id,
         cart: user.cart
       }
     }
@@ -176,10 +185,8 @@ export const deleteCartItem = catchAsync(async (req, res, next) => {
     status: 'success',
     data: {
       message: 'Cart item removed',
-      token: owner.token,
       isGuestCreated: owner.isGuestCreated,
       data: {
-        userId: user._id,
         cart: user.cart
       }
     }
@@ -209,11 +216,6 @@ export const checkout = catchAsync(async (req, res, next) => {
   const {data} = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
   const user = await userModel.findById(data._id);
   if(!user) return next(new AppError("User not found"));
-  
-  if(user.status == 'Guest') {
-    if(!req.body?.email || !req.body?.phone || !req.body?.address) 
-      return next(new AppError("missing contact data"));
-  }
 
   let processedCart;
   try {
