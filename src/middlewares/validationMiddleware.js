@@ -88,8 +88,10 @@ export const validateUpdateCart = validate(updateCartSchema);
 
 // Checkout: address and phone are required (especially for guests who don't have them on file)
 const checkoutSchema = joi.object({
-    address: joi.string().required(),
-    phone: joi.string().required()
+    // Require a minimally meaningful address
+    address: joi.string().min(10).required(),
+    // Use the same Egyptian phone number format as updateMeSchema
+    phone: joi.string().length(11).pattern(new RegExp('^01[0125][0-9]{8}$')).required()
 });
 export const validateCheckout = validate(checkoutSchema);
 
