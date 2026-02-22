@@ -53,7 +53,7 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0
     }
-});
+}, { timestamps: true });
 
 // Password check method
 userSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
