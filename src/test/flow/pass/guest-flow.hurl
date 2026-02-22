@@ -77,6 +77,6 @@ HTTP 200
 GET http://localhost:3000/api/products
 HTTP 200
 
-# Browse Reviews (no auth needed)
-GET http://localhost:3000/api/reviews
+# Browse Reviews for Product (no auth needed)
+GET http://localhost:3000/api/reviews/{{product_id}}
 HTTP 200

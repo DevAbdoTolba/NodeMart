@@ -1,6 +1,6 @@
 import express from "express";
-import * as reviewController from "../controllers/reviewController.js";
-import { protect, restrictTo } from "../middlewares/authMiddleware.js";
+import { createReview, getReviews, updateReview, deleteReview } from "../controllers/reviewController.js";
+import { protect } from "../middlewares/authMiddleware.js";
 import { validateCreateReview, validateId } from "../middlewares/validationMiddleware.js";
 
 const router = express.Router();
@@ -15,20 +15,8 @@ const router = express.Router();
 /**
  * @swagger
  * /api/reviews:
- *   get:
- *     summary: Get all reviews
- *     tags: [Reviews]
- *     responses:
- *       200:
- *         description: List of all reviews
- */
-router.get("/", reviewController.getAllReviews);
-
-/**
- * @swagger
- * /api/reviews:
  *   post:
- *     summary: Create a review
+ *     summary: Create a review (must have purchased the product)
  *     tags: [Reviews]
  *     security:
  *       - tokenAuth: []
@@ -59,32 +47,70 @@ router.get("/", reviewController.getAllReviews);
  *     responses:
  *       201:
  *         description: Review created successfully
+ *       400:
+ *         description: Already reviewed this product
+ *       403:
+ *         description: Must purchase product before reviewing
  */
-router.post("/", protect, validateCreateReview, reviewController.createReview);
+router.post("/", protect, validateCreateReview, createReview);
 
 /**
  * @swagger
- * /api/reviews/{id}:
+ * /api/reviews/{productId}:
  *   get:
- *     summary: Get review by ID
+ *     summary: Get all reviews for a product
  *     tags: [Reviews]
  *     parameters:
- *       - name: id
+ *       - name: productId
  *         in: path
  *         required: true
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Review details
+ *         description: List of reviews for the product
  */
-router.get("/:id", validateId(), reviewController.getReview);
+router.get("/:productId", validateId('productId'), getReviews);
+
+/**
+ * @swagger
+ * /api/reviews/{id}:
+ *   patch:
+ *     summary: Update your own review
+ *     tags: [Reviews]
+ *     security:
+ *       - tokenAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               review:
+ *                 type: string
+ *               ratings:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Review updated successfully
+ *       403:
+ *         description: Can only update your own reviews
+ */
+router.patch("/:id", validateId(), protect, updateReview);
 
 /**
  * @swagger
  * /api/reviews/{id}:
  *   delete:
- *     summary: Delete a review
+ *     summary: Delete a review (owner or admin)
  *     tags: [Reviews]
  *     security:
  *       - tokenAuth: []
@@ -97,7 +123,9 @@ router.get("/:id", validateId(), reviewController.getReview);
  *     responses:
  *       204:
  *         description: Review deleted successfully
+ *       403:
+ *         description: Can only delete your own reviews
  */
-router.delete("/:id", validateId(), protect, restrictTo("admin"), reviewController.deleteReview);
+router.delete("/:id", validateId(), protect, deleteReview);
 
 export default router;

@@ -93,6 +93,6 @@ token: {{token}}
 }
 HTTP 201
 
-# Get All Reviews
-GET http://localhost:3000/api/reviews
+# Get All Reviews for Product
+GET http://localhost:3000/api/reviews/{{product_id}}
 HTTP 200
