@@ -21,12 +21,8 @@ router.use(protect);
  *   get:
  *     summary: Get my orders
  *     tags: [Orders]
- *     parameters:
- *       - in: header
- *         name: token
- *         required: true
- *         schema:
- *           type: string
+ *     security: 
+ *       - tokenAuth: []
  *     responses:
  *       200:
  *         description: List of user orders
@@ -43,15 +39,39 @@ router.get("/", getMyOrders);
  *   get:
  *     summary: Get all orders (Admin only)
  *     tags: [Orders]
+ *     security:
+ *       - tokenAuth: []
  *     parameters:
- *       - in: header
- *         name: token
- *         required: true
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 20
+ *           default: 5
+ *         description: Number of items per page (max 20)
+ *       - in: query
+ *         name: sort
  *         schema:
  *           type: string
+ *         description: "Sort fields (comma-separated). Prefix with - for descending (e.g. -createdAt,totalPrice)"
+ *       - in: query
+ *         name: fields
+ *         schema:
+ *           type: string
+ *         description: "Fields to include (comma-separated, e.g. status,totalPrice)"
  *     responses:
  *       200:
- *         description: All orders
+ *         description: Paginated list of all orders
+ *       400:
+ *         description: Limit exceeds maximum of 20
  *       403:
  *         description: Not authorized
  */
@@ -63,12 +83,9 @@ router.get("/admin/all", restrictTo("admin"), getAllOrders);
  *   get:
  *     summary: Get a single order by ID
  *     tags: [Orders]
+ *     security: 
+ *       - tokenAuth: []
  *     parameters:
- *       - in: header
- *         name: token
- *         required: true
- *         schema:
- *           type: string
  *       - in: path
  *         name: id
  *         required: true
@@ -90,12 +107,9 @@ router.get("/:id", validateId(), getOrder);
  *   patch:
  *     summary: Update order status (Admin only)
  *     tags: [Orders]
+ *     security: 
+ *       - tokenAuth: []
  *     parameters:
- *       - in: header
- *         name: token
- *         required: true
- *         schema:
- *           type: string
  *       - in: path
  *         name: id
  *         required: true
