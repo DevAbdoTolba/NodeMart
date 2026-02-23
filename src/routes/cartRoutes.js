@@ -81,7 +81,7 @@ cartRouter.post('/', validateAddToCart, addItemToCart);
  *             properties:
  *               paymentMethod:
  *                 type: string
- *                 enum: ["paypal", "wallet"]
+ *                 enum: ["paypal", "wallet", "COD"]
  *               address:
  *                 type: string
  *                 default: "samalot elbalad"

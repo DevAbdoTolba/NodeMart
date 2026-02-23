@@ -240,6 +240,30 @@ export const checkout = catchAsync(async (req, res, next) => {
     }
     let order = await addOrder(processedCart, user._id);
     if(order) {
+      for(let item of order.items) {
+        await productModel.findByIdAndUpdate(item.product, {
+          $inc: { stock: -item.quantity }
+        });
+      }
+      return res.status(200).json({status: "success", data: order});
+    } else {
+      return next(new AppError("order failed"));
+    }
+  } else if (req.body.paymentMethod == "COD") {
+    const updatedUser = await userModel.findByIdAndUpdate(
+      user._id,
+      { cart: [] }
+    );
+    if (!updatedUser) {
+      return next(new AppError("User not found"));
+    }
+    let order = await addOrder(processedCart, user._id, true);
+    if(order) {
+      for(let item of order.items) {
+        await productModel.findByIdAndUpdate(item.product, {
+          $inc: { stock: -item.quantity }
+        });
+      }
       return res.status(200).json({status: "success", data: order});
     } else {
       return next(new AppError("order failed"));
@@ -286,7 +310,7 @@ export const checkout = catchAsync(async (req, res, next) => {
   } else {
     return res.status(400).json({
       status: "fail",
-      message: "Invalid payment method. Supported methods are 'wallet' and 'paypal'."
+      message: "Invalid payment method. Supported methods are 'wallet', 'paypal', and 'COD'."
     });
   }
 })

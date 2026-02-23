@@ -27,7 +27,7 @@ export const updateOrderStatus = catchAsync(async (req, res, next) => {
     res.status(200).json({ status: "success", data: { order } });
 });
 
-export const addOrder = async (details, user) => {
+export const addOrder = async (details, user, isCOD = false) => {
     let items = [];
     for (let item of details.cart) {
         items.push({
@@ -41,7 +41,8 @@ export const addOrder = async (details, user) => {
         items: items,
         totalPrice: details.totalPrice,
         status: "Pending",
-        paymentStatus: "Completed"
+        paymentStatus: isCOD ? "Completed" : "Pending",
+        COD: isCOD
     });
     return order;
 };
