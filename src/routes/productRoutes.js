@@ -44,6 +44,16 @@ const router = express.Router();
  *         schema:
  *           type: string
  *         description: "Fields to include (comma-separated, e.g. name,description)"
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *         description: "Filter by Category ID (Just paste the ID here, e.g., 699c06f59badd39e176c2a71)"
+ *       - in: query
+ *         name: name
+ *         schema:
+ *           type: string
+ *         description: "Filter by exact product name"
  *     responses:
  *       200:
  *         description: Paginated list of products
