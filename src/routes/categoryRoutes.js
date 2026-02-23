@@ -1,6 +1,7 @@
 import express from "express";
 import * as categoryController from "../controllers/categoryController.js";
 import { validateCreateCategory, validateUpdateCategory, validateId } from "../middlewares/validationMiddleware.js";
+import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
@@ -25,6 +26,27 @@ router.get("/", categoryController.getAllCategories);
 
 /**
  * @swagger
+ * /api/categories/{id}:
+ *   get:
+ *     summary: Get single category
+ *     tags: [Categories]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Category data
+ */
+router.get("/:id", validateId(), categoryController.getCategory);
+
+router.use(protect);
+router.use(restrictTo("admin"));
+
+/**
+ * @swagger
  * /api/categories:
  *   post:
  *     summary: Create new category
@@ -45,24 +67,6 @@ router.get("/", categoryController.getAllCategories);
  *         description: Category created successfully
  */
 router.post("/", validateCreateCategory, categoryController.createCategory);
-
-/**
- * @swagger
- * /api/categories/{id}:
- *   get:
- *     summary: Get single category
- *     tags: [Categories]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: Category data
- */
-router.get("/:id", validateId(), categoryController.getCategory);
 
 /**
  * @swagger
