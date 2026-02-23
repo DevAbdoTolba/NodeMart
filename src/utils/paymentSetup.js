@@ -14,7 +14,6 @@ const environment = new paypal.core.SandboxEnvironment(
 
 export const client = new paypal.core.PayPalHttpClient(environment)
 
-// POST /api/cart/payments/paypal/confirm
 // Client calls this after the buyer approves on PayPal
 export const confirmPayment = async (req, res, next) => {
   try {
@@ -52,7 +51,7 @@ export const confirmPayment = async (req, res, next) => {
   }
 }
 
-// Webhook handler (optional, for PayPal server-side notifications)
+// Webhook handler (optional, for PayPal server-side)
 export const approvePayment = async (req, res, next) => {
   try {
     const event = req.body;
@@ -60,31 +59,28 @@ export const approvePayment = async (req, res, next) => {
     if (event.event_type === "CHECKOUT.ORDER.APPROVED") {
       const orderId = event.resource.id;
 
-      // 1. Find the order in our DB (Same style as confirmPayment)
       const order = await orderModel.findOne({ paypalOrderId: orderId });
       
       if (!order) {
         return next(new AppError("Couldn't find order in DB", 404));
       }
 
-      // 2. Update the order status
+      // 1. Update the order status
       order.paymentStatus = "Completed";
       await order.save();
 
-      // 3. Subtract stock for each item
+      // 2. Subtract stock for each item
       for(let item of order.items) {
         await productModel.findByIdAndUpdate(item.product, {
           $inc: { stock: -item.quantity }
         });
       }
 
-      // 4. Clear the user's cart
+      // 3. Clear the user's cart
       await userModel.findByIdAndUpdate(order.user, { cart: [] });
 
       res.status(200).send("Webhook received and processed");
     } else {
-      // It's good practice to send a 200 OK for events you don't process, 
-      // otherwise PayPal might keep trying to resend them!
       res.status(200).send("Webhook received");
     }
   } catch (error) {
