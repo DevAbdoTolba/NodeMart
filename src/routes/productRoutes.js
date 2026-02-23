@@ -1,5 +1,5 @@
 import express from "express";
-import * as productController from "../controllers/productController.js";
+import {getAllProducts, getProduct, createProduct, updateProduct, deleteProduct} from "../controllers/productController.js";
 import { validateCreateProduct, validateUpdateProduct, validateId } from "../middlewares/validationMiddleware.js";
 import { protect, restrictTo } from '../middlewares/authMiddleware.js';
 
@@ -18,11 +18,39 @@ const router = express.Router();
  *   get:
  *     summary: Get all products
  *     tags: [Products]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 20
+ *           default: 5
+ *         description: Number of items per page (max 20)
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *         description: "Sort fields (comma-separated). Prefix with - for descending (e.g. -createdAt,name)"
+ *       - in: query
+ *         name: fields
+ *         schema:
+ *           type: string
+ *         description: "Fields to include (comma-separated, e.g. name,description)"
  *     responses:
  *       200:
- *         description: List of all products
+ *         description: Paginated list of products
+ *       400:
+ *         description: Limit exceeds maximum of 20
  */
-router.get("/", productController.getAllProducts);
+router.get("/", getAllProducts);
 
 /**
  * @swagger
@@ -40,7 +68,7 @@ router.get("/", productController.getAllProducts);
  *       200:
  *         description: Product data
  */
-router.get("/:id", validateId(), productController.getProduct);
+router.get("/:id", validateId(), getProduct);
 
 router.use(protect);
 router.use(restrictTo("admin"));
@@ -73,7 +101,7 @@ router.use(restrictTo("admin"));
  *       201:
  *         description: Product created successfully
  */
-router.post("/", validateCreateProduct, productController.createProduct);
+router.post("/", validateCreateProduct, createProduct);
 
 /**
  * @swagger
@@ -109,7 +137,7 @@ router.post("/", validateCreateProduct, productController.createProduct);
  *       200:
  *         description: Product updated successfully
  */
-router.patch("/:id", validateId(), validateUpdateProduct, productController.updateProduct);
+router.patch("/:id", validateId(), validateUpdateProduct, updateProduct);
 
 /**
  * @swagger
@@ -127,6 +155,6 @@ router.patch("/:id", validateId(), validateUpdateProduct, productController.upda
  *       204:
  *         description: Product deleted successfully
  */
-router.delete("/:id", validateId(), productController.deleteProduct);
+router.delete("/:id", validateId(), deleteProduct);
 
 export default router;
