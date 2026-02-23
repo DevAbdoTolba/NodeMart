@@ -79,6 +79,8 @@ router.use(restrictTo("admin"));
  *   post:
  *     summary: Create new product
  *     tags: [Products]
+ *     security:
+ *       - tokenAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -109,6 +111,8 @@ router.post("/", validateCreateProduct, createProduct);
  *   patch:
  *     summary: Update product
  *     tags: [Products]
+ *     security:
+ *       - tokenAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -145,6 +149,8 @@ router.patch("/:id", validateId(), validateUpdateProduct, updateProduct);
  *   delete:
  *     summary: Delete product
  *     tags: [Products]
+ *     security:
+ *       - tokenAuth: []
  *     parameters:
  *       - in: path
  *         name: id
