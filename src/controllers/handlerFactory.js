@@ -135,6 +135,9 @@ export const getAll = (Model) =>
       results: doc.length,
       data: {
         data: doc,
+        page,
+        pages: Math.ceil(doc.length / limit),
+        
       },
     });
   });

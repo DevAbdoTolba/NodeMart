@@ -1,5 +1,5 @@
 import express from "express";
-import * as categoryController from "../controllers/categoryController.js";
+import { getAllCategories, getCategory, createCategory, updateCategory, deleteCategory } from "../controllers/categoryController.js";
 import { validateCreateCategory, validateUpdateCategory, validateId } from "../middlewares/validationMiddleware.js";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
 
@@ -18,11 +18,39 @@ const router = express.Router();
  *   get:
  *     summary: Get all categories
  *     tags: [Categories]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 20
+ *           default: 5
+ *         description: Number of items per page (max 20)
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *         description: "Sort fields (comma-separated). Prefix with - for descending (e.g. -createdAt,name)"
+ *       - in: query
+ *         name: fields
+ *         schema:
+ *           type: string
+ *         description: "Fields to include (comma-separated, e.g. name,description)"
  *     responses:
  *       200:
- *         description: List of all categories
+ *         description: Paginated list of categories
+ *       400:
+ *         description: Limit exceeds maximum of 20
  */
-router.get("/", categoryController.getAllCategories);
+router.get("/", getAllCategories);
 
 /**
  * @swagger
@@ -40,7 +68,7 @@ router.get("/", categoryController.getAllCategories);
  *       200:
  *         description: Category data
  */
-router.get("/:id", validateId(), categoryController.getCategory);
+router.get("/:id", validateId(), getCategory);
 
 router.use(protect);
 router.use(restrictTo("admin"));
@@ -66,7 +94,7 @@ router.use(restrictTo("admin"));
  *       201:
  *         description: Category created successfully
  */
-router.post("/", validateCreateCategory, categoryController.createCategory);
+router.post("/", validateCreateCategory, createCategory);
 
 /**
  * @swagger
@@ -95,7 +123,7 @@ router.post("/", validateCreateCategory, categoryController.createCategory);
  *       200:
  *         description: Category updated successfully
  */
-router.patch("/:id", validateId(), validateUpdateCategory, categoryController.updateCategory);
+router.patch("/:id", validateId(), validateUpdateCategory, updateCategory);
 
 /**
  * @swagger
@@ -115,6 +143,6 @@ router.patch("/:id", validateId(), validateUpdateCategory, categoryController.up
  *       404:
  *         description: Category not found
  */
-router.delete("/:id", validateId(), categoryController.deleteCategory);
+router.delete("/:id", validateId(), deleteCategory);
 
 export default router;
