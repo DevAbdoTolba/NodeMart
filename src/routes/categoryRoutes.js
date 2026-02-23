@@ -79,6 +79,8 @@ router.use(restrictTo("admin"));
  *   post:
  *     summary: Create new category
  *     tags: [Categories]
+ *     security:
+ *       - tokenAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -102,6 +104,8 @@ router.post("/", validateCreateCategory, createCategory);
  *   patch:
  *     summary: Update category
  *     tags: [Categories]
+ *     security:
+ *       - tokenAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -131,6 +135,8 @@ router.patch("/:id", validateId(), validateUpdateCategory, updateCategory);
  *   delete:
  *     summary: Delete category
  *     tags: [Categories]
+ *     security:
+ *       - tokenAuth: []
  *     parameters:
  *       - in: path
  *         name: id
