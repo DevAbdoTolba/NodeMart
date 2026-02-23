@@ -199,6 +199,32 @@ cartRouter.post("/payments/paypal/webhook", approvePayment);
  */
 cartRouter.post("/payments/paypal/confirm", confirmPayment);
 
+/**
+ * @swagger
+ * /api/cart/payments/wallet:
+ *   post:
+ *     summary: Charge wallet
+ *     tags: [Payment]
+ *     security:
+ *       - tokenAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [amount]
+ *             properties:
+ *               amount:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Payment confirmed, stock updated, cart cleared
+ *       400:
+ *         description: Payment not completed
+ *       404:
+ *         description: Order not found
+ */
 cartRouter.post("/payments/wallet", chargeWallet);
 
 export default cartRouter;
