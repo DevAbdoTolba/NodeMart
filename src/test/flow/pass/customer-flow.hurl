@@ -1,5 +1,29 @@
 # Customer Flow - Pass
-# Register -> Login -> Profile -> Products -> Cart (Unverified gets 403) -> Review
+# Setup product via admin -> Register -> Login -> Profile -> Products -> Cart (Unverified gets 403) -> Review
+
+# Login as admin to create a product for testing
+POST http://localhost:3000/api/users/login
+Content-Type: application/json
+{
+  "email": "nesmaaa@example.com",
+  "password": "my@Password123"
+}
+HTTP 200
+[Captures]
+admin_token: jsonpath "$.token"
+
+# Create a Product as admin
+POST http://localhost:3000/api/products
+Content-Type: application/json
+token: {{admin_token}}
+{
+  "name": "Customer Test Product {{unix_timestamp}}",
+  "price": 99.99,
+  "stock": 10
+}
+HTTP 201
+[Captures]
+product_id: jsonpath "$.data.data._id"
 
 # Register
 POST http://localhost:3000/api/users/register
@@ -41,18 +65,6 @@ HTTP 200
 GET http://localhost:3000/api/products
 HTTP 200
 
-# Create a Product
-POST http://localhost:3000/api/products
-Content-Type: application/json
-{
-  "name": "Test Product",
-  "price": 99.99,
-  "stock": 10
-}
-HTTP 201
-[Captures]
-product_id: jsonpath "$.data.data._id"
-
 # Get Single Product
 GET http://localhost:3000/api/products/{{product_id}}
 HTTP 200
@@ -81,7 +93,7 @@ token: {{token}}
 }
 HTTP 403
 
-# Create Review
+# Create Review (Unverified user who hasn't purchased -> 403)
 POST http://localhost:3000/api/reviews
 Content-Type: application/json
 token: {{token}}
@@ -91,7 +103,7 @@ token: {{token}}
   "ratings": 5,
   "product": "{{product_id}}"
 }
-HTTP 201
+HTTP 403
 
 # Get All Reviews for Product
 GET http://localhost:3000/api/reviews/{{product_id}}

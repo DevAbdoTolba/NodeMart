@@ -1,11 +1,23 @@
 # Guest Flow - Pass
-# Guest auto-creation via cart -> Cart operations -> Checkout tests
+# Setup product via admin -> Guest auto-creation via cart -> Cart operations -> Checkout tests
 
-# Create a Product (needed for cart)
-POST http://localhost:3000/api/products
+# Login as admin to create a product for testing
+POST http://localhost:3000/api/users/login
 Content-Type: application/json
 {
-  "name": "Guest Product",
+  "email": "nesmaaa@example.com",
+  "password": "my@Password123"
+}
+HTTP 200
+[Captures]
+admin_token: jsonpath "$.token"
+
+# Create a Product as admin (needed for cart)
+POST http://localhost:3000/api/products
+Content-Type: application/json
+token: {{admin_token}}
+{
+  "name": "Guest Test Product {{unix_timestamp}}",
   "price": 49.99,
   "stock": 20
 }

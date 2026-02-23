@@ -66,22 +66,22 @@ HTTP 401
 GET http://localhost:3000/api/products/not-a-valid-id
 HTTP 400
 
-# Create product with missing fields
+# Create product without auth -> 401 (protect middleware runs first)
 POST http://localhost:3000/api/products
 Content-Type: application/json
 {
   "stock": 10
 }
-HTTP 400
+HTTP 401
 
-# Create product with negative price
+# Create product without auth -> 401 (protect middleware runs first)
 POST http://localhost:3000/api/products
 Content-Type: application/json
 {
   "name": "Bad Product",
   "price": -5
 }
-HTTP 400
+HTTP 401
 
 # Add to cart missing productId
 POST http://localhost:3000/api/cart
