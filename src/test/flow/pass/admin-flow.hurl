@@ -1,6 +1,5 @@
 # Admin Flow - Pass
-# Register admin -> Login -> Categories -> Products -> Orders/Stats -> Block User
-
+# Login -> Categories -> Products -> Orders/Stats -> Block User
 
 # Login
 POST http://localhost:3000/api/users/login
@@ -16,6 +15,7 @@ token: jsonpath "$.token"
 # Create Category
 POST http://localhost:3000/api/categories
 Content-Type: application/json
+token: {{token}}
 {
   "name": "Electronics {{unix_timestamp}}"
 }
@@ -30,6 +30,7 @@ HTTP 200
 # Update Category
 PATCH http://localhost:3000/api/categories/{{category_id}}
 Content-Type: application/json
+token: {{token}}
 {
   "name": "Updated Electronics {{unix_timestamp}}"
 }
@@ -38,6 +39,7 @@ HTTP 200
 # Create Product
 POST http://localhost:3000/api/products
 Content-Type: application/json
+token: {{token}}
 {
   "name": "Admin Product",
   "price": 199.99,
@@ -51,6 +53,7 @@ product_id: jsonpath "$.data.data._id"
 # Update Product
 PATCH http://localhost:3000/api/products/{{product_id}}
 Content-Type: application/json
+token: {{token}}
 {
   "price": 149.99
 }
@@ -99,8 +102,10 @@ HTTP 200
 
 # Delete Product
 DELETE http://localhost:3000/api/products/{{product_id}}
+token: {{token}}
 HTTP 204
 
 # Delete Category
 DELETE http://localhost:3000/api/categories/{{category_id}}
+token: {{token}}
 HTTP 204

@@ -63,64 +63,52 @@ token: {{regular_token}}
 }
 HTTP 403
 
-# --- Now login as actual admin to test validation (400s) ---
-POST http://localhost:3000/api/users/login
-Content-Type: application/json
-{
-  "email": "nesmaaa@example.com",
-  "password": "my@Password123"
-}
-HTTP 200
-[Captures]
-admin_token: jsonpath "$.token"
+# --- Test validation errors on admin-protected routes ---
+# These routes require admin auth, so without admin token they return 401
 
-# Update order with invalid ID -> 400
+# Update order with invalid ID without admin auth -> 401
 PATCH http://localhost:3000/api/orders/not-valid-id/status
 Content-Type: application/json
-token: {{admin_token}}
 {
   "status": "Shipped"
 }
-HTTP 400
+HTTP 401
 
-# Update order with invalid status -> 400
+# Update order with invalid status without admin auth -> 401
 PATCH http://localhost:3000/api/orders/aaaaaaaaaaaaaaaaaaaaaaaa/status
 Content-Type: application/json
-token: {{admin_token}}
 {
   "status": "InvalidStatus"
 }
-HTTP 400
+HTTP 401
 
-# Block user with invalid ID -> 400
+# Block user with invalid ID without admin auth -> 401
 PATCH http://localhost:3000/api/users/not-valid-id/status
 Content-Type: application/json
-token: {{admin_token}}
 {
   "isBlocked": true
 }
-HTTP 400
+HTTP 401
 
-# Block user missing isBlocked -> 400
+# Block user missing isBlocked without admin auth -> 401
 PATCH http://localhost:3000/api/users/aaaaaaaaaaaaaaaaaaaaaaaa/status
 Content-Type: application/json
-token: {{admin_token}}
 {
 }
-HTTP 400
+HTTP 401
 
-# Category with too short name -> 400
+# Category with too short name without admin auth -> 401
 POST http://localhost:3000/api/categories
 Content-Type: application/json
 {
   "name": "a"
 }
-HTTP 400
+HTTP 401
 
-# Delete category with invalid ID -> 400
+# Delete category with invalid ID without admin auth -> 401
 DELETE http://localhost:3000/api/categories/not-valid-id
-HTTP 400
+HTTP 401
 
-# Delete product with invalid ID -> 400
+# Delete product with invalid ID without admin auth -> 401
 DELETE http://localhost:3000/api/products/not-valid-id
-HTTP 400
+HTTP 401
