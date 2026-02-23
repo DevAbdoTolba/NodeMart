@@ -106,6 +106,7 @@ router.get("/:id", validateId(), getOrder);
  * /api/orders/{id}/status:
  *   patch:
  *     summary: Update order status (Admin only)
+ *     description: Update order status (Pending, Shipped, Delivered). Only admins.
  *     tags: [Orders]
  *     security: 
  *       - tokenAuth: []
