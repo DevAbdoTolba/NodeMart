@@ -160,7 +160,7 @@ cartRouter.delete('/:itemId', validateId('itemId'), deleteCartItem);
  * /api/cart/payments/paypal/webhook:
  *   post:
  *     summary: PayPal payment webhook
- *     tags: [Cart]
+ *     tags: [Payment]
  *     requestBody:
  *       content:
  *         application/json:
@@ -177,7 +177,7 @@ cartRouter.post("/payments/paypal/webhook", approvePayment);
  * /api/cart/payments/paypal/confirm:
  *   post:
  *     summary: Confirm PayPal payment after buyer approval
- *     tags: [Cart]
+ *     tags: [Payment]
  *     requestBody:
  *       required: true
  *       content:
