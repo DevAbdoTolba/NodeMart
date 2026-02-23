@@ -4,7 +4,8 @@ import {
   updateCartItemQuantity,
   deleteCartItem,
   getCartItems,
-  checkout
+  checkout, 
+  chargeWallet
 } from '../controllers/cartController.js';
 import {approvePayment, confirmPayment} from '../utils/paymentSetup.js';
 import { validateAddToCart, validateUpdateCart, validateId } from '../middlewares/validationMiddleware.js';
@@ -197,5 +198,7 @@ cartRouter.post("/payments/paypal/webhook", approvePayment);
  *         description: Order not found
  */
 cartRouter.post("/payments/paypal/confirm", confirmPayment);
+
+cartRouter.post("/payments/wallet", chargeWallet);
 
 export default cartRouter;

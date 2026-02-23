@@ -300,6 +300,7 @@ export const checkout = catchAsync(async (req, res, next) => {
     
     let order = {
       user: user._id,
+      type: "order",
       items: items,
       totalPrice: processedCart.totalPrice,
       paypalOrderId: response.result.id
@@ -314,3 +315,49 @@ export const checkout = catchAsync(async (req, res, next) => {
     });
   }
 })
+
+
+export const chargeWallet = async (req, res, next) => {
+  if(!(req.headers.token)) return next(new AppError("Invalid token"));
+  const token = req.headers.token;
+
+  const {data} = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
+  const user = await userModel.findById(data._id);
+  if(!user) return next(new AppError("User not found"));
+  const request = new paypal.orders.OrdersCreateRequest()
+  request.prefer("return=representation")
+  request.requestBody({
+    intent: "CAPTURE",
+    purchase_units: [
+      {
+        amount: {
+          currency_code: "USD",
+          value: req.body.amount
+        }
+      }
+    ]
+  })
+  
+  const response = await client.execute(request)
+  
+  const approvalUrl = response.result.links.find(
+    link => link.rel === "approve"
+  ).href
+  
+  let order = {
+    user: user._id,
+    type: "walletCharge",
+    totalPrice: req.body.amount,
+    paypalOrderId: response.result.id
+  }
+  order = await orderModel.create(order);
+  
+  if(order)
+    res.status(200).json({status: "success", data: order, approvalUrl: approvalUrl});
+    else {
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid payment method. Supported methods are 'wallet', 'paypal', and 'COD'."
+    });
+  }
+}
