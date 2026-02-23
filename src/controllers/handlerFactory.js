@@ -97,7 +97,7 @@ export const getOne = (Model, popOptions) =>
     });
   });
 
-export const getAll = (Model) =>
+export const getAll = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
     // 1. Prepare Filter
     const queryObj = { ...req.query }; // ?price=100&category=electronics&page=2&limit=10&sort=-price,createdAt
@@ -126,9 +126,13 @@ export const getAll = (Model) =>
     }
     const skip = (page - 1) * limit;
     query = query.skip(skip).limit(limit);
+    
+    // 5. Handle if populate
+    if (popOptions) query = query.populate(popOptions);
 
-    // 5. Execute
+    // 6. Execute
     const doc = await query;
+
 
     res.status(200).json({
       status: "success",
