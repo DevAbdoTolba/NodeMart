@@ -1,14 +1,13 @@
 import orderModel from '../models/orderModel.js';
+import * as factory from './handlerFactory.js';
 import catchAsync from '../utils/catchAsync.js';
 import AppError from '../utils/appError.js';
 
-// User: get my orders
 export const getMyOrders = catchAsync(async (req, res, next) => {
     const orders = await orderModel.find({ user: req.user._id });
     res.status(200).json({ status: "success", results: orders.length, data: orders });
 });
 
-// User: get single order (must be mine)
 export const getOrder = catchAsync(async (req, res, next) => {
     const order = await orderModel.findById(req.params.id);
     if (!order) return next(new AppError("Order not found", 404));
@@ -18,13 +17,8 @@ export const getOrder = catchAsync(async (req, res, next) => {
     res.status(200).json({ status: "success", data: order });
 });
 
-// Admin: get all orders
-export const getAllOrders = catchAsync(async (req, res, next) => {
-    const orders = await orderModel.find().populate("user");
-    res.status(200).json({ status: "success", results: orders.length, data: orders });
-});
+export const getAllOrders = factory.getAll(orderModel, "user");
 
-// Admin: update order status
 export const updateOrderStatus = catchAsync(async (req, res, next) => {
     const order = await orderModel.findById(req.params.id);
     if (!order) return next(new AppError("Order not found", 404));
@@ -33,7 +27,6 @@ export const updateOrderStatus = catchAsync(async (req, res, next) => {
     res.status(200).json({ status: "success", data: { order } });
 });
 
-// Internal: called by cartController checkout (not a route handler)
 export const addOrder = async (details, user) => {
     let items = [];
     for (let item of details.cart) {
