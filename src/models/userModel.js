@@ -39,17 +39,6 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    cart: [
-        {
-            productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
-            quantity: { type: Number }
-        }
-    ],
-    wishlist: [
-        {
-            productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' }
-        }
-    ],
     walletBalance: {
         type: Number,
         default: 0

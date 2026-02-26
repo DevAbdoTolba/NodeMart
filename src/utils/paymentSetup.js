@@ -2,6 +2,7 @@ import paypal from "@paypal/checkout-server-sdk"
 import dotenv from 'dotenv';
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
+import cartModel from "../models/cartModel.js";
 import productModel from "../models/productModel.js";
 import AppError from "./appError.js";
 
@@ -42,7 +43,7 @@ export const confirmPayment = async (req, res, next) => {
     }
 
     // 4. Clear the user's cart
-    await userModel.findByIdAndUpdate(order.user, { cart: [] });
+    await cartModel.findOneAndUpdate({ user: order.user }, { items: [] });
 
     res.status(200).json({ status: "success", message: "Payment confirmed", data: order });
   } catch (error) {

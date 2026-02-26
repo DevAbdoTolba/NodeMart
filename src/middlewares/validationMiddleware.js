@@ -86,6 +86,12 @@ const updateCartSchema = joi.object({
 });
 export const validateUpdateCart = validate(updateCartSchema);
 
+const addToWishlistSchema = joi.object({
+    productId: joi.string().required()
+});
+export const validateAddToWishlist = validate(addToWishlistSchema);
+
+
 // Checkout: address and phone are required (especially for guests who don't have them on file)
 const checkoutSchema = joi.object({
     // Require a minimally meaningful address

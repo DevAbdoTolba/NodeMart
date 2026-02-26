@@ -16,6 +16,7 @@ import categoryRoutes from './routes/categoryRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
 import reviewRoutes from './routes/reviewRoutes.js'
 import adminRoutes from './routes/adminRoutes.js'
+import wishlistRoutes from './routes/wishlistRoutes.js'
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin',adminRoutes);
+app.use('/api/wishlist', wishlistRoutes);
 
 // 404 Handler
 app.use(
