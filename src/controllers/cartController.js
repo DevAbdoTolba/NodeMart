@@ -116,6 +116,12 @@ export const addItemToCart = catchAsync(async (req, res, next) => {
     return next(new AppError(`Not enough stock. ${avilableQuantity ? `Only ${avilableQuantity} available for you` : 'out of stock'}`, 400));
   }
 
+  const totalQuantity = existing ? toPositiveInt(existing.quantity, 1) + quantity : quantity;
+  if(findProduct.stock < totalQuantity) {
+    const avilableQuantity = existing ? findProduct.stock - existing?.quantity : findProduct.stock;
+    return next(new AppError(`Not enough stock. ${avilableQuantity ? `Only ${avilableQuantity} available for you` : 'out of stock'}`, 400));
+  }
+
   if (existing) {
     existing.quantity = totalQuantity;
   } else {
