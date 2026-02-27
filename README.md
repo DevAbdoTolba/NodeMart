@@ -1,6 +1,8 @@
 # NodeMart
 nodejs ecommerace app api only
 
+# Endpoints
+You can find all the endpoints in the [ENDPOINTS.md](ENDPOINTS.md) file.
 
 # ERD
 ```mermaid
