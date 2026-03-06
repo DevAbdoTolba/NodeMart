@@ -18,7 +18,11 @@ import reviewRoutes from './routes/reviewRoutes.js'
 import adminRoutes from './routes/adminRoutes.js'
 import wishlistRoutes from './routes/wishlistRoutes.js'
 
+import cors from "cors"
+
 const app = express();
+
+app.use(cors());
 
 // Global Middlewares
 app.use(express.json());
