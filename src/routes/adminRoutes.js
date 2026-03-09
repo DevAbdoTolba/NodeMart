@@ -1,7 +1,6 @@
 import express from "express";
-import { getStats } from "../controllers/adminController.js";
+import { getStats, getAllUsers } from "../controllers/adminController.js";
 import { protect, restrictTo } from "../middlewares/authMiddleware.js";
-
 const router = express.Router();
 
 /**
@@ -14,6 +13,14 @@ const router = express.Router();
 router.use(protect);
 router.use(restrictTo("admin"));
 
+/**
+ * @swagger
+ * /api/admin/users:
+ * get:
+ * summary: Get all users (Admin only)
+ * tags: [Admin]
+ */
+router.get("/users", getAllUsers);
 /**
  * @swagger
  * /api/admin/stats:
