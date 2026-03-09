@@ -16,9 +16,11 @@ router.use(restrictTo("admin"));
 /**
  * @swagger
  * /api/admin/users:
- * get:
- * summary: Get all users (Admin only)
- * tags: [Admin]
+ *  get:
+ *    summary: Get all users (Admin only)
+ *    tags: [Admin]
+ *    security:
+ *      - tokenAuth: []
  */
 router.get("/users", getAllUsers);
 /**
