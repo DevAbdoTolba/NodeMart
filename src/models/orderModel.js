@@ -25,7 +25,7 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Pending", "Shipped", "Delivered"],
+      enum: ["Pending", "Shipped", "Delivered", "Cancelled"],
       default: "Pending"
     },
     paypalOrderId: { type: String },
