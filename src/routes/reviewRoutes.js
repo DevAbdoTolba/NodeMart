@@ -81,7 +81,13 @@ router.post("/", protect, validateCreateReview, createReview);
  *                   example: "success"
  *                 canReview:
  *                   type: boolean
- *                   example: true
+ *                   example: false
+ *                 reason:
+ *                   type: string
+ *                   example: "NOT_PURCHASED"
+ *                 message:
+ *                   type: string
+ *                   example: "You can only review purchased products"
  */
 router.get("/can-review/:productId", protect, validateId('productId'), canReview);
 

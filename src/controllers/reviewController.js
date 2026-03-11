@@ -88,11 +88,11 @@ export const deleteReview = catchAsync(async (req, res, next) => {
     return next(new AppError("Unauthorized", 403));
   }
 
-  if (req.user.role === "admin") {
+  if (req.user.role === "admin" || review.user.toString() === req.user._id.toString()) {
     review.isDeleted = true;
     await review.save();
   } else {
-    await Review.findByIdAndDelete(req.params.id);
+    return next(new AppError("Unauthorized", 403));
   }
 
   const reviews = await Review.find({ product: review.product, isDeleted: { $ne: true } });
@@ -107,10 +107,24 @@ export const canReview = catchAsync(async (req, res, next) => {
   const user = req.user._id;
 
   const existingProduct = await Product.findById(productId);
-  if (!existingProduct) return res.status(200).json({ status: "success", canReview: false });
+  if (!existingProduct) {
+    return res.status(200).json({ 
+      status: "success", 
+      canReview: false, 
+      reason: "NOT_FOUND", 
+      message: "Product not found" 
+    });
+  }
 
   const existingReview = await Review.findOne({ user, product: productId });
-  if (existingReview) return res.status(200).json({ status: "success", canReview: false });
+  if (existingReview) {
+    return res.status(200).json({ 
+      status: "success", 
+      canReview: false, 
+      reason: "ALREADY_REVIEWED", 
+      message: "You can have only one review. update review instead" 
+    });
+  }
 
   const order = await Order.findOne({
     user,
@@ -118,7 +132,14 @@ export const canReview = catchAsync(async (req, res, next) => {
     "items.product": productId
   });
 
-  if (!order) return res.status(200).json({ status: "success", canReview: false });
+  if (!order) {
+    return res.status(200).json({ 
+      status: "success", 
+      canReview: false, 
+      reason: "NOT_PURCHASED", 
+      message: "You can only review purchased products" 
+    });
+  }
 
   res.status(200).json({ status: "success", canReview: true });
 });
