@@ -7,7 +7,7 @@ import {
   checkout, 
   chargeWallet
 } from '../controllers/cartController.js';
-import {approvePayment, confirmPayment} from '../utils/paymentSetup.js';
+import {approvePayment, confirmPayment, confirmWalletPayment} from '../utils/paymentSetup.js';
 import { validateAddToCart, validateUpdateCart, validateId } from '../middlewares/validationMiddleware.js';
 import { protect } from '../middlewares/authMiddleware.js';
 import { accountGuard } from '../middlewares/accountGuard.js';
@@ -226,5 +226,31 @@ cartRouter.post("/payments/paypal/confirm", confirmPayment);
  *         description: Order not found
  */
 cartRouter.post("/payments/wallet", chargeWallet);
+
+/**
+ * @swagger
+ * /api/cart/payments/wallet/confirm:
+ *   post:
+ *     summary: Confirm PayPal payment for wallet recharge after buyer approval
+ *     tags: [Payment]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [paypalOrderId]
+ *             properties:
+ *               paypalOrderId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Wallet recharge confirmed and wallet balance updated
+ *       400:
+ *         description: Payment not completed or already charged
+ *       404:
+ *         description: Order not found
+ */
+cartRouter.post("/payments/wallet/confirm", confirmWalletPayment);
 
 export default cartRouter;

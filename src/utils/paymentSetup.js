@@ -51,6 +51,47 @@ export const confirmPayment = async (req, res, next) => {
   }
 }
 
+export const confirmWalletPayment = async (req, res, next) => {
+  try {
+    const { paypalOrderId } = req.body;
+    if(!paypalOrderId) return next(new AppError("paypalOrderId is required", 400));
+
+    // 1. Check the order status on PayPal
+    const request = new paypal.orders.OrdersGetRequest(paypalOrderId);
+    const response = await client.execute(request);
+
+    if(response.result.status !== "APPROVED" && response.result.status !== "COMPLETED") {
+      return next(new AppError("Payment was not approved", 400));
+    }
+
+    // 2. Find and update the order in our DB
+    const order = await orderModel.findOne({ paypalOrderId: paypalOrderId });
+    if(!order) return next(new AppError("Order not found", 404));
+
+    if(order.type !== "walletCharge") {
+       return next(new AppError("This order is not a wallet charge request", 400));
+    }
+    
+    if(order.paymentStatus === "Completed") {
+       return next(new AppError("Wallet already charged for this order", 400));
+    }
+
+    order.paymentStatus = "Completed";
+    await order.save();
+
+    // 3. Add funds to wallet
+    const user = await userModel.findByIdAndUpdate(
+      order.user,
+      { $inc: { walletBalance: order.totalPrice } },
+      { new: true }
+    );
+
+    res.status(200).json({ status: "success", message: "Wallet recharge confirmed", data: { balance: user.walletBalance } });
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+  }
+}
+
 // Webhook handler (optional, for PayPal server-side)
 export const approvePayment = async (req, res, next) => {
   let order = await orderModel.findOne({paypalOrderId: req.body.resource.id});
