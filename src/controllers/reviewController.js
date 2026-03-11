@@ -35,15 +35,15 @@ export const createReview = catchAsync(async (req, res, next) => {
   if (!order) return next(new AppError("You can only review purchased products", 403));
 
   const newReview = await Review.create({ title, review, ratings, product, user });
-  const reviews = await Review.find({ product });
-  const avgRating = reviews.reduce((acc, r) => acc + r.ratings, 0) / reviews.length;
+  const reviews = await Review.find({ product, isDeleted: { $ne: true } });
+  const avgRating = reviews.length ? reviews.reduce((acc, r) => acc + r.ratings, 0) / reviews.length : 0;
   await Product.findByIdAndUpdate(product, { ratingsAverage: avgRating });
 
   res.status(201).json({ status: "success", data: { data: newReview } });
 });
 
 export const getReviews = catchAsync(async (req, res, next) => {
-  const reviews = await Review.find({ product: req.params.productId })
+  const reviews = await Review.find({ product: req.params.productId, isDeleted: { $ne: true } })
     .populate("user", "name")
     .populate("product", "name");
   
@@ -73,8 +73,8 @@ export const updateReview = catchAsync(async (req, res, next) => {
   if (ratings) review.ratings = ratings;
   await review.save();
 
-  const reviews = await Review.find({ product: review.product });
-  const avgRating = reviews.reduce((acc, r) => acc + r.ratings, 0) / reviews.length;
+  const reviews = await Review.find({ product: review.product, isDeleted: { $ne: true } });
+  const avgRating = reviews.length ? reviews.reduce((acc, r) => acc + r.ratings, 0) / reviews.length : 0;
   await Product.findByIdAndUpdate(review.product, { ratingsAverage: avgRating });
 
   res.status(200).json({ status: "success", data: { data: review } });
@@ -88,8 +88,14 @@ export const deleteReview = catchAsync(async (req, res, next) => {
     return next(new AppError("Unauthorized", 403));
   }
 
-  await Review.findByIdAndDelete(req.params.id);
-  const reviews = await Review.find({ product: review.product });
+  if (req.user.role === "admin") {
+    review.isDeleted = true;
+    await review.save();
+  } else {
+    await Review.findByIdAndDelete(req.params.id);
+  }
+
+  const reviews = await Review.find({ product: review.product, isDeleted: { $ne: true } });
   const avgRating = reviews.length ? reviews.reduce((acc, r) => acc + r.ratings, 0) / reviews.length : 0;
   await Product.findByIdAndUpdate(review.product, { ratingsAverage: avgRating });
 
