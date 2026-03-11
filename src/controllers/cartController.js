@@ -244,6 +244,10 @@ export const checkout = catchAsync(async (req, res, next) => {
     return next(error);
   }
 
+  if (processedCart.cart.length === 0 || processedCart.totalPrice <= 0) {
+    return next(new AppError("Cart is empty", 400));
+  }
+
   if (req.body.paymentMethod == "wallet") {
     if (user.walletBalance == null) return next(new AppError("User wallet not found"));
     
@@ -337,6 +341,11 @@ export const chargeWallet = async (req, res, next) => {
   const {data} = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
   const user = await userModel.findById(data._id);
   if(!user) return next(new AppError("User not found"));
+
+  if (!req.body.amount || req.body.amount <= 0) {
+    return next(new AppError("Amount must be greater than zero", 400));
+  }
+
   const request = new paypal.orders.OrdersCreateRequest()
   request.prefer("return=representation")
   request.requestBody({
