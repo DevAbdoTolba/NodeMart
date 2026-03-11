@@ -102,9 +102,9 @@ const checkoutSchema = joi.object({
 export const validateCheckout = validate(checkoutSchema);
 
 
-
+// التعديل هنا: أضفنا 'Cancelled' لكي يقبلها الـ Joi Validator
 const updateOrderStatusSchema = joi.object({
-    status: joi.string().valid('Pending', 'Shipped', 'Delivered').required()
+    status: joi.string().valid('Pending', 'Shipped', 'Delivered', 'Cancelled').required()
 });
 export const validateUpdateOrderStatus = validate(updateOrderStatusSchema);
 
