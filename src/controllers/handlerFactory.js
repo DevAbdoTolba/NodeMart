@@ -105,6 +105,12 @@ export const getAll = (Model, popOptions) =>
     excludedFields.forEach((field) => delete queryObj[field]); // we are going for only simple queries now...
     // For advanced searching we might use ?price[gte]=100&price[lte]=200 and replace it with $gte : 100 $lte : 200 with regex
 
+    // Intercept 'name' and convert it to a regex for partial matching
+    if (queryObj.name) {
+      queryObj.name = { $regex: queryObj.name, $options: "i" };
+    }
+
+
     // 2. Initialize Query
     let query = Model.find(queryObj);
 
