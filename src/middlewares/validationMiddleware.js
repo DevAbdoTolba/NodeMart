@@ -47,7 +47,7 @@ const updateProductSchema = joi.object({
     price: joi.number().positive(),
     stock: joi.number().integer().min(0),
     image: joi.string(),
-    category: joi.string()
+    category: joi.array().items(joi.string())
 }).min(1); // at least one field
 export const validateUpdateProduct = validate(updateProductSchema);
 
