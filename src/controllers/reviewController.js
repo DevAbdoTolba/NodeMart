@@ -101,3 +101,24 @@ export const deleteReview = catchAsync(async (req, res, next) => {
 
   res.status(204).json({ status: "success" });
 });
+
+export const canReview = catchAsync(async (req, res, next) => {
+  const { productId } = req.params;
+  const user = req.user._id;
+
+  const existingProduct = await Product.findById(productId);
+  if (!existingProduct) return res.status(200).json({ status: "success", canReview: false });
+
+  const existingReview = await Review.findOne({ user, product: productId });
+  if (existingReview) return res.status(200).json({ status: "success", canReview: false });
+
+  const order = await Order.findOne({
+    user,
+    paymentStatus: "Completed",
+    "items.product": productId
+  });
+
+  if (!order) return res.status(200).json({ status: "success", canReview: false });
+
+  res.status(200).json({ status: "success", canReview: true });
+});

@@ -1,5 +1,5 @@
 import express from "express";
-import { createReview, getReviews, updateReview, deleteReview } from "../controllers/reviewController.js";
+import { createReview, getReviews, updateReview, deleteReview, canReview } from "../controllers/reviewController.js";
 import { protect } from "../middlewares/authMiddleware.js";
 import { validateCreateReview, validateId } from "../middlewares/validationMiddleware.js";
 
@@ -53,6 +53,37 @@ const router = express.Router();
  *         description: Must purchase product before reviewing
  */
 router.post("/", protect, validateCreateReview, createReview);
+
+/**
+ * @swagger
+ * /api/reviews/can-review/{productId}:
+ *   get:
+ *     summary: Check if a user can review a product
+ *     tags: [Reviews]
+ *     security:
+ *       - tokenAuth: []
+ *     parameters:
+ *       - name: productId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Check completed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "success"
+ *                 canReview:
+ *                   type: boolean
+ *                   example: true
+ */
+router.get("/can-review/:productId", protect, validateId('productId'), canReview);
 
 /**
  * @swagger
