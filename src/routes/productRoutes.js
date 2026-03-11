@@ -145,8 +145,10 @@ router.post("/", validateCreateProduct, createProduct);
  *               image:
  *                 type: string
  *               category:
- *                 type: string
- *                 description: Category ID
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Category IDs
  *     responses:
  *       200:
  *         description: Product updated successfully
